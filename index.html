@@ -83,6 +83,20 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
 .accform { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px 16px; margin-bottom: 16px; align-items: start; }
 .accform .check { align-self: center; }
 table.liq td.best { background: var(--accent-soft); font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.btn { font: 600 13.5px var(--font-body); border-radius: 6px; padding: 9px 14px; cursor: pointer; border: 1px solid var(--accent); background: transparent; color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--sheet); }
+.btn:hover { filter: brightness(1.08); }
+.status { font-size: 13px; color: var(--muted); }
+.preview-label { margin: 18px 0 6px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.rep-preview { border: 1px solid var(--line); border-radius: 6px; background: #ffffff; color: #1b1f1d; padding: 24px; overflow-x: auto; }
+@media print {
+  body { background: #fff !important; }
+  header.top, form.panel, .results > *:not(#clientCard), footer.wrap, #clientCard > *:not(#clientPreview) { display: none !important; }
+  main.wrap { display: block; padding: 0; }
+  #clientCard { border: 0; padding: 0; }
+  .rep-preview { border: 0; padding: 0; }
+}
 .sub-box { border-left: 2px solid var(--line); padding-left: 10px; display: flex; flex-direction: column; gap: 10px; }
 
 /* Risultati */
@@ -367,6 +381,42 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       <div id="accnote" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
     </section>
 
+    <section class="card" id="clientCard">
+      <h2>Riepilogo per il cliente</h2>
+      <p class="sub">Una pagina chiara da stampare o allegare all'email: cosa versare entro il 30 novembre, il confronto 2025/2026 e i rischi della scelta. I dati del cliente restano solo in questo browser.</p>
+      <div class="accform">
+        <div class="field">
+          <label for="cliente">Cliente</label>
+          <div class="inp"><input id="cliente" style="text-align:left;padding-right:10px;font-family:var(--font-body)" placeholder="Nome e cognome"></div>
+        </div>
+        <div class="field">
+          <label for="studio">Preparato da</label>
+          <div class="inp"><input id="studio" style="text-align:left;padding-right:10px;font-family:var(--font-body)" placeholder="Studio o professionista"></div>
+        </div>
+        <div class="field">
+          <label for="metodo">Acconto da comunicare</label>
+          <select id="metodo">
+            <option value="auto">Il più conveniente</option>
+            <option value="storico">Metodo storico</option>
+            <option value="prev">Metodo previsionale</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:14px">
+        <label for="noteCliente">Note per il cliente</label>
+        <textarea id="noteCliente" rows="2" style="width:100%;font:14px var(--font-body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px 10px;resize:vertical" placeholder="Es. il modello F24 è allegato; per dubbi chiamaci entro venerdì."></textarea>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="btnDownload" hidden>Scarica riepilogo stampabile</button>
+        <button type="button" class="btn primary" id="btnPrint" hidden>Stampa o salva in PDF</button>
+        <button type="button" class="btn" id="btnCopy">Copia testo per l'email</button>
+        <span class="status" id="clientStatus" role="status"></span>
+      </div>
+      <textarea id="copyFallback" hidden readonly rows="8" style="width:100%;margin-top:10px;font:12.5px var(--font-num);background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px"></textarea>
+      <div class="preview-label">Anteprima</div>
+      <div id="clientPreview" class="rep-preview"></div>
+    </section>
+
     <section class="card">
       <h2>Imposta lorda per scaglione</h2>
       <p class="sub">Quanto reddito imponibile cade in ciascuno scaglione e quanta imposta genera (rigo RN5).</p>
@@ -459,6 +509,8 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     2026: Object.assign({}, DEFAULTS, { reddito: "44000", tipo: "aut", contributi: "7200", sanitarie: "1400", spese19: "900", ritenute: "5200" })
   };
   var ACC_DEFAULTS = { rn34dich: "", primo: "", margine: "0", isa: false };
+  var CLIENT_DEFAULTS = { cliente: "", studio: "", metodo: "auto", noteCliente: "" };
+  var CLIENT_IDS = Object.keys(CLIENT_DEFAULTS);
   var IDS = Object.keys(DEFAULTS);
   var CHECKS = { coniuge: 1, disabile: 1, isa: 1 };
   var SELECTS = { tipo: 1, contratto: 1, percFigli: 1, regione: 1 };
@@ -620,10 +672,10 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
   }
 
   // ---- Stato: un insieme di dati per anno, più i parametri dell'acconto ----
-  var state = { cur: "2026", 2025: Object.assign({}, EXAMPLE[2025]), 2026: Object.assign({}, EXAMPLE[2026]), acc: Object.assign({}, ACC_DEFAULTS) };
+  var state = { cur: "2026", 2025: Object.assign({}, EXAMPLE[2025]), 2026: Object.assign({}, EXAMPLE[2026]), acc: Object.assign({}, ACC_DEFAULTS), client: Object.assign({}, CLIENT_DEFAULTS) };
   try {
     var s = JSON.parse(localStorage.getItem(KEY) || "null");
-    if (s && s[2025] && s[2026]) { state[2025] = Object.assign({}, DEFAULTS, s[2025]); state[2026] = Object.assign({}, DEFAULTS, s[2026]); state.acc = Object.assign({}, ACC_DEFAULTS, s.acc || {}); state.cur = s.cur === "2025" ? "2025" : "2026"; }
+    if (s && s[2025] && s[2026]) { state[2025] = Object.assign({}, DEFAULTS, s[2025]); state[2026] = Object.assign({}, DEFAULTS, s[2026]); state.acc = Object.assign({}, ACC_DEFAULTS, s.acc || {}); state.cur = s.cur === "2025" ? "2025" : "2026"; state.client = Object.assign({}, CLIENT_DEFAULTS, s.client || {}); }
   } catch (e) {}
 
   function parseSet(raw) {
@@ -642,12 +694,14 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     state[state.cur] = o;
     ["rn34dich", "primo", "margine"].forEach(function (k) { state.acc[k] = $(k).value; });
     state.acc.isa = $("isa").checked;
+    CLIENT_IDS.forEach(function (k) { state.client[k] = $(k).value; });
   }
   function stateToForm() {
     var src = state[state.cur];
     IDS.forEach(function (k) { var el = $(k); if (CHECKS[k]) el.checked = !!src[k]; else el.value = src[k] == null ? "" : src[k]; });
     ["rn34dich", "primo", "margine"].forEach(function (k) { $(k).value = state.acc[k]; });
     $("isa").checked = !!state.acc.isa;
+    CLIENT_IDS.forEach(function (k) { $(k).value = state.client[k] || ""; });
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
   function setYear(y) {
@@ -769,6 +823,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     $("liq").innerHTML = html + "</tbody>";
 
     renderAcconti({ st: st, baseSt: baseSt, fromDich: String(acc.rn34dich).trim() !== "", primo: primo, primoDefault: String(acc.primo).trim() === "", margine: margine, basePrev: basePrev, prevTot: prevTot, prevR2: prevR2, stR2: stR2, minor: minor, isa: isa, b: b });
+    renderClient({ a: a, b: b, i25: i25, i26: i26, st: st, stR2: stR2, prevTot: prevTot, prevR2: prevR2, primo: primo, minor: minor, margine: margine, baseSt: baseSt, basePrev: basePrev, isa: isa });
     renderBrackets(a, b);
     renderChart(i26, b.Rc);
     save();
@@ -794,6 +849,136 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     n.push('<p class="sub" style="margin:0">Restano fuori dal confronto gli acconti di cedolare secca, imposta sostitutiva del regime forfettario e contributi INPS, che hanno basi e calcoli propri. Ricorda che la scheda 2026 applica già l\'aliquota del 33% e le altre regole 2026.</p>');
     $("accnote").innerHTML = n.join("");
   }
+
+  // ---- Riepilogo per il cliente ----
+  function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  var lastReport = null;
+  var REP_CSS = ".rep{font-family:Inter,'Helvetica Neue',Arial,sans-serif;color:#1b1f1d;font-size:14px;line-height:1.5;max-width:760px;margin:0 auto}" +
+    ".rep h1{font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:24px;margin:0 0 4px;letter-spacing:-.01em}" +
+    ".rep .meta{color:#5c6a64;font-size:13px;margin-bottom:20px}" +
+    ".rep .due{border:2px solid #0d6b5a;border-radius:8px;padding:16px 18px;margin:0 0 22px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;align-items:center}" +
+    ".rep .due .l{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#0d6b5a;font-weight:600}" +
+    ".rep .due .t{font-size:15px;font-weight:600;margin-top:2px}.rep .due .s{font-size:12.5px;color:#5c6a64}" +
+    ".rep .due .v{font-family:'IBM Plex Mono',Menlo,monospace;font-size:26px;font-weight:600;color:#0d6b5a;white-space:nowrap}" +
+    ".rep h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#5c6a64;margin:22px 0 8px;font-weight:600}" +
+    ".rep table{width:100%;border-collapse:collapse;font-size:13.5px}" +
+    ".rep th,.rep td{padding:6px 8px;border-bottom:1px solid #d8dfdb;text-align:right;white-space:nowrap}" +
+    ".rep th:first-child,.rep td:first-child{text-align:left;white-space:normal}" +
+    ".rep th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#5c6a64;border-bottom:2px solid #1b1f1d}" +
+    ".rep td.n{font-family:'IBM Plex Mono',Menlo,monospace}.rep tr.tot td{font-weight:600}.rep td.hl{background:#dcefe9;font-weight:600}" +
+    ".rep p{margin:8px 0}.rep .note{border-left:3px solid #9a5b00;background:#fbf0dc;padding:10px 12px;font-size:13px;margin:14px 0}" +
+    ".rep .free{border-left:3px solid #0d6b5a;background:#f3f5f2;padding:10px 12px;margin:14px 0;white-space:pre-wrap}" +
+    ".rep .foot{color:#5c6a64;font-size:11.5px;margin-top:26px;border-top:1px solid #d8dfdb;padding-top:10px}";
+
+  function clientData(x) {
+    var c = state.client;
+    var metodo = c.metodo === "auto" ? (x.minor > 0.5 ? "prev" : "storico") : c.metodo;
+    var rata = metodo === "prev" ? x.prevR2 : x.stR2;
+    var oggi = new Date().toLocaleDateString("it-IT", { day: "2-digit", month: "long", year: "numeric" });
+    return { c: c, metodo: metodo, rata: rata, oggi: oggi, x: x };
+  }
+
+  function reportBody(d) {
+    var x = d.x, a = x.a, b = x.b, c = d.c;
+    var nome = c.cliente.trim() ? esc(c.cliente.trim()) : "Gentile cliente";
+    var h = '<div class="rep">';
+    h += "<h1>Riepilogo IRPEF e acconto di novembre 2026</h1>";
+    h += '<div class="meta">' + (c.cliente.trim() ? "Cliente: <b>" + esc(c.cliente.trim()) + "</b> · " : "") + "Data: " + esc(d.oggi) + (c.studio.trim() ? " · Preparato da: " + esc(c.studio.trim()) : "") + "</div>";
+    h += '<div class="due"><div><div class="l">Da versare entro lunedì 30 novembre 2026</div><div class="t">Seconda rata dell\'acconto IRPEF 2026</div><div class="s">Modello F24, codice tributo 4034, anno di riferimento 2026 · ' + (d.metodo === "prev" ? "metodo previsionale" : "metodo storico") + "</div></div>";
+    h += '<div class="v">' + (d.rata > 0 ? fm(d.rata) : "nulla da versare") + "</div></div>";
+
+    h += "<p>" + nome + ", " ;
+    if (d.metodo === "prev") {
+      h += "in base ai redditi e alle spese che prevediamo per il 2026, l'imposta dell'anno risulta inferiore a quella del 2025. Per questo l'acconto può essere ricalcolato: la seconda rata scende da " + fm(x.stR2) + " a " + fm(x.prevR2) + ", con " + fm(Math.max(x.stR2 - x.prevR2, 0)) + " in meno da versare ora.</p>";
+      h += '<div class="note"><b>Da sapere:</b> il calcolo si basa su una stima. Se a consuntivo l\'imposta 2026 risultasse più alta degli acconti versati, sulla differenza sarebbero dovuti una sanzione del 25% e gli interessi, riducibili con il ravvedimento operoso. Ti chiediamo di segnalarci subito eventuali redditi in più rispetto a quanto previsto.</div>';
+    } else {
+      h += "l'acconto è calcolato sull'imposta della dichiarazione 2025 (metodo storico). Versando questo importo sei al riparo da sanzioni, anche se l'imposta 2026 dovesse risultare più alta." + (x.minor > 0.5 ? " In alternativa, con il metodo previsionale la rata potrebbe scendere a " + fm(x.prevR2) + ", accettando il rischio di sanzioni se la stima si rivelasse bassa." : "") + "</p>";
+    }
+
+    h += "<h2>Il confronto tra i due metodi</h2><table><thead><tr><th></th><th>Metodo storico</th><th>Metodo previsionale</th></tr></thead><tbody>";
+    h += '<tr><td>Imposta di riferimento</td><td class="n">' + fm(x.baseSt) + '</td><td class="n">' + fm(x.basePrev) + "</td></tr>";
+    h += '<tr><td>Acconto totale per il 2026</td><td class="n">' + fm(x.st.tot) + '</td><td class="n">' + fm(x.prevTot) + "</td></tr>";
+    h += '<tr><td>Prima rata (giugno/luglio)</td><td class="n">' + fm(x.st.r1) + '</td><td class="n">' + fm(x.primo) + "</td></tr>";
+    h += '<tr class="tot"><td>Seconda rata (30 novembre)</td><td class="n' + (d.metodo === "storico" ? " hl" : "") + '">' + fm(x.stR2) + '</td><td class="n' + (d.metodo === "prev" ? " hl" : "") + '">' + fm(x.prevR2) + "</td></tr></tbody></table>";
+
+    h += "<h2>Le tue imposte: 2025 dichiarato e stima 2026</h2><table><thead><tr><th></th><th>2025</th><th>2026 (stima)</th></tr></thead><tbody>";
+    [["Reddito complessivo", a.Rc, b.Rc], ["Oneri deducibili", a.rn3 + a.rn2, b.rn3 + b.rn2], ["Reddito imponibile", a.imp, b.imp], ["Imposta lorda", a.lordo, b.lordo], ["Detrazioni", a.rn22, b.rn22], ["Imposta netta (IRPEF)", a.netta, b.netta, 1], ["Ritenute già subite", x.i25.ritenute, x.i26.ritenute], ["Imposta residua (base dell'acconto)", a.rn34, b.rn34, 1], ["Addizionali regionale e comunale", a.addReg + a.addCom, b.addReg + b.addCom], ["Carico fiscale complessivo", a.carico, b.carico, 1]].forEach(function (r) {
+      h += "<tr" + (r[3] ? ' class="tot"' : "") + "><td>" + r[0] + '</td><td class="n">' + fm(r[1]) + '</td><td class="n">' + fm(r[2]) + "</td></tr>";
+    });
+    h += "</tbody></table>";
+    if (c.noteCliente.trim()) h += '<div class="free">' + esc(c.noteCliente.trim()) + "</div>";
+    h += '<div class="foot">Simulazione basata sui dati del modello Redditi PF 2026 (anno d\'imposta 2025) e sulle regole IRPEF 2026: 23% fino a 28.000 €, 33% fino a 50.000 €, 43% oltre. Gli importi sono indicativi e non sostituiscono la dichiarazione dei redditi. Non comprende gli acconti di cedolare secca, regime forfettario e contributi previdenziali.</div>';
+    return h + "</div>";
+  }
+
+  function reportDocument(d) {
+    var title = "Riepilogo IRPEF" + (d.c.cliente.trim() ? " - " + esc(d.c.cliente.trim()) : "");
+    return "<!doctype html><html lang=\"it\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>" + title + "</title>" +
+      "<style>body{margin:0;padding:32px 20px;background:#fff}" + REP_CSS + ".bar{max-width:760px;margin:0 auto 20px;display:flex;justify-content:flex-end}.bar button{font:600 14px Arial,sans-serif;background:#0d6b5a;color:#fff;border:0;border-radius:6px;padding:10px 16px;cursor:pointer}@media print{.bar{display:none}body{padding:0}}@page{margin:16mm}</style></head><body>" +
+      '<div class="bar"><button onclick="window.print()">Stampa o salva in PDF</button></div>' + reportBody(d) + "</body></html>";
+  }
+
+  function reportText(d) {
+    var x = d.x, a = x.a, b = x.b, c = d.c, L = [];
+    L.push((c.cliente.trim() ? c.cliente.trim() : "Gentile cliente") + ",");
+    L.push("");
+    if (d.metodo === "prev") {
+      L.push("in base ai redditi e alle spese previste per il 2026, l'imposta dell'anno risulta inferiore a quella del 2025: per questo abbiamo ricalcolato l'acconto (metodo previsionale).");
+    } else {
+      L.push("ti riepiloghiamo l'acconto IRPEF di novembre, calcolato sulla dichiarazione 2025 (metodo storico).");
+    }
+    L.push("");
+    L.push("DA VERSARE ENTRO LUNEDÌ 30 NOVEMBRE 2026");
+    L.push("Seconda rata acconto IRPEF 2026 - F24 codice tributo 4034, anno 2026: " + (d.rata > 0 ? fm(d.rata) : "nulla da versare"));
+    L.push("");
+    L.push("Confronto: metodo storico " + fm(x.stR2) + " / metodo previsionale " + fm(x.prevR2) + ".");
+    L.push("Imposta netta 2025 dichiarata: " + fm(a.netta) + " - Imposta netta 2026 stimata: " + fm(b.netta) + ".");
+    if (d.metodo === "prev") {
+      L.push("");
+      L.push("Da sapere: il calcolo si basa su una stima. Se a consuntivo l'imposta 2026 risultasse più alta degli acconti versati, sulla differenza sarebbero dovuti una sanzione del 25% e gli interessi, riducibili con il ravvedimento operoso. Ti chiediamo di segnalarci subito eventuali redditi in più rispetto al previsto.");
+    }
+    if (c.noteCliente.trim()) { L.push(""); L.push(c.noteCliente.trim()); }
+    L.push("");
+    L.push("Un cordiale saluto" + (c.studio.trim() ? ",\n" + c.studio.trim() : "."));
+    return L.join("\n");
+  }
+
+  function renderClient(x) {
+    var d = clientData(x);
+    lastReport = d;
+    $("clientPreview").innerHTML = "<style>" + REP_CSS + "</style>" + reportBody(d);
+  }
+
+  var inFrame = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+  var downloadsApi = null;
+  $("btnPrint").hidden = inFrame;
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("downloads").then(function (dl) { downloadsApi = dl; $("btnDownload").hidden = !dl; }).catch(function () {});
+  }
+  function setStatus(t) { $("clientStatus").textContent = t; }
+  $("btnPrint").addEventListener("click", function () { window.print(); });
+  $("btnDownload").addEventListener("click", function () {
+    if (!downloadsApi || !lastReport) return;
+    var nome = (lastReport.c.cliente.trim() || "cliente").replace(/[^\w\-àèéìòù ]+/gi, "").trim().replace(/\s+/g, "-");
+    setStatus("");
+    downloadsApi.save({ filename: "Riepilogo-IRPEF-2026-" + nome + ".html", data: reportDocument(lastReport) }).then(function () {
+      setStatus("Salvato. Aprilo nel browser per stamparlo o salvarlo in PDF, oppure allegalo all'email.");
+    }).catch(function (e) {
+      var code = e && e.code;
+      if (code === "declined") setStatus("Salvataggio annullato.");
+      else if (code === "rate_limited") setStatus("C'è già una richiesta aperta: riprova tra poco.");
+      else if (code === "host_unavailable") { setStatus("Questa app non può salvare file: apri il calcolatore in un browser o da computer."); $("btnDownload").hidden = true; }
+      else { setStatus("Il salvataggio non è disponibile qui. Usa Copia testo per l'email."); $("btnDownload").hidden = true; }
+    });
+  });
+  $("btnCopy").addEventListener("click", function () {
+    if (!lastReport) return;
+    var txt = reportText(lastReport), fb = $("copyFallback");
+    function fallback() { fb.value = txt; fb.hidden = false; fb.focus(); fb.select(); setStatus("Testo selezionato: copialo con Ctrl+C o Cmd+C."); }
+    try {
+      navigator.clipboard.writeText(txt).then(function () { fb.hidden = true; setStatus("Testo copiato: incollalo nell'email."); }, fallback);
+    } catch (e) { fallback(); }
+  });
 
   var SEGC = ["color-mix(in srgb, var(--accent) 55%, var(--sheet))", "var(--accent)", "color-mix(in srgb, var(--accent) 60%, var(--ink))"];
   function renderBrackets(a, b) {
@@ -864,6 +1049,8 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
   $("f").addEventListener("change", render);
   $("f").addEventListener("submit", function (e) { e.preventDefault(); });
   $("accCard").addEventListener("input", render);
+  $("clientCard").addEventListener("input", function (e) { if (e.target.id !== "copyFallback") render(); });
+  $("clientCard").addEventListener("change", function (e) { if (e.target.id !== "copyFallback") render(); });
   $("accCard").addEventListener("change", render);
   $("reset").addEventListener("click", function () {
     state[2025] = Object.assign({}, EXAMPLE[2025]); state[2026] = Object.assign({}, EXAMPLE[2026]); state.acc = Object.assign({}, ACC_DEFAULTS);
