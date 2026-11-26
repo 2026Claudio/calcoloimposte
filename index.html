@@ -338,9 +338,9 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
         <small>Ritenute IRPEF della Certificazione Unica: datore di lavoro, ente pensionistico, ritenute d'acconto sui compensi.</small>
       </div>
       <div class="field" id="accWrap">
-        <label for="acconti">Acconti versati per l'anno (RN38)</label>
-        <div class="inp"><input id="acconti" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        <small>Prima e seconda rata di acconto versate nel 2025. Non incidono sull'acconto 2026, che si calcola sul rigo RN34.</small>
+        <label for="acconti" id="accLabel">Acconti versati per l'anno (RN38)</label>
+        <div class="inp"><input id="acconti" inputmode="decimal" value=""><span class="unit">€</span></div>
+        <small id="accHint"></small>
       </div>
     </fieldset>
     <button type="button" class="reset" id="reset">Ripristina l'esempio</button>
@@ -366,9 +366,9 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
           <small>Lascia vuoto per usare il valore calcolato dalla scheda 2025. Nei casi particolari usa RN61 col. 4.</small>
         </div>
         <div class="field">
-          <label for="primo">Primo acconto versato a giugno/luglio</label>
+          <label for="primo">Acconti 2026 già versati</label>
           <div class="inp"><input id="primo" inputmode="decimal" placeholder="= 1ª rata storico"><span class="unit">€</span></div>
-          <small>Lascia vuoto se hai versato esattamente la prima rata del metodo storico.</small>
+          <small>Prima rata ed eventuali altri versamenti per il 2026, anche compensati in F24. È lo stesso campo della scheda 2026. Vuoto: prima rata del metodo storico.</small>
         </div>
         <div class="field">
           <label for="margine">Margine di prudenza</label>
@@ -502,13 +502,13 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
 
   var DEFAULTS = { reddito: "45000", abitaz: "0", contributi: "0", deducibili: "0", prev: "0", cedolare: "0", tipo: "dip", giorni: "365", contratto: "ti", redditoLav: "",
     coniuge: false, mesiConiuge: "12", figliDetr: "0", percFigli: "100", figliTot: "0", ascendenti: "0", disabile: false,
-    sanitarie: "1200", mutuo: "0", spese19: "800", edilizi: "0", altreDetr: "0", regione: "custom", addReg: "1,23", addCom: "0,8", esenzCom: "0", ritenute: "0", acconti: "0" };
+    sanitarie: "1200", mutuo: "0", spese19: "800", edilizi: "0", altreDetr: "0", regione: "custom", addReg: "1,23", addCom: "0,8", esenzCom: "0", ritenute: "0", acconti: "" };
   // Esempio: professionista con ritenute d'acconto e reddito in calo nel 2026
   var EXAMPLE = {
     2025: Object.assign({}, DEFAULTS, { reddito: "62000", tipo: "aut", contributi: "9500", sanitarie: "1400", spese19: "900", ritenute: "7000", acconti: "9800" }),
     2026: Object.assign({}, DEFAULTS, { reddito: "44000", tipo: "aut", contributi: "7200", sanitarie: "1400", spese19: "900", ritenute: "5200" })
   };
-  var ACC_DEFAULTS = { rn34dich: "", primo: "", margine: "0", isa: false };
+  var ACC_DEFAULTS = { rn34dich: "", margine: "0", isa: false };
   var CLIENT_DEFAULTS = { cliente: "", studio: "", metodo: "auto", noteCliente: "" };
   var CLIENT_IDS = Object.keys(CLIENT_DEFAULTS);
   var IDS = Object.keys(DEFAULTS);
@@ -675,7 +675,9 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
   var state = { cur: "2026", 2025: Object.assign({}, EXAMPLE[2025]), 2026: Object.assign({}, EXAMPLE[2026]), acc: Object.assign({}, ACC_DEFAULTS), client: Object.assign({}, CLIENT_DEFAULTS) };
   try {
     var s = JSON.parse(localStorage.getItem(KEY) || "null");
-    if (s && s[2025] && s[2026]) { state[2025] = Object.assign({}, DEFAULTS, s[2025]); state[2026] = Object.assign({}, DEFAULTS, s[2026]); state.acc = Object.assign({}, ACC_DEFAULTS, s.acc || {}); state.cur = s.cur === "2025" ? "2025" : "2026"; state.client = Object.assign({}, CLIENT_DEFAULTS, s.client || {}); }
+    if (s && s[2025] && s[2026]) { state[2025] = Object.assign({}, DEFAULTS, s[2025]); state[2026] = Object.assign({}, DEFAULTS, s[2026]); state.acc = Object.assign({}, ACC_DEFAULTS, s.acc || {}); state.cur = s.cur === "2025" ? "2025" : "2026"; state.client = Object.assign({}, CLIENT_DEFAULTS, s.client || {});
+      if (!s.v) state[2026].acconti = (s.acc && s.acc.primo) || ""; // versione precedente: il primo acconto era nella sezione acconti
+    }
   } catch (e) {}
 
   function parseSet(raw) {
@@ -692,18 +694,19 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var o = {};
     IDS.forEach(function (k) { var el = $(k); o[k] = CHECKS[k] ? el.checked : el.value; });
     state[state.cur] = o;
-    ["rn34dich", "primo", "margine"].forEach(function (k) { state.acc[k] = $(k).value; });
+    ["rn34dich", "margine"].forEach(function (k) { state.acc[k] = $(k).value; });
     state.acc.isa = $("isa").checked;
     CLIENT_IDS.forEach(function (k) { state.client[k] = $(k).value; });
   }
   function stateToForm() {
     var src = state[state.cur];
     IDS.forEach(function (k) { var el = $(k); if (CHECKS[k]) el.checked = !!src[k]; else el.value = src[k] == null ? "" : src[k]; });
-    ["rn34dich", "primo", "margine"].forEach(function (k) { $(k).value = state.acc[k]; });
+    ["rn34dich", "margine"].forEach(function (k) { $(k).value = state.acc[k]; });
+    $("primo").value = state[2026].acconti || "";
     $("isa").checked = !!state.acc.isa;
     CLIENT_IDS.forEach(function (k) { $(k).value = state.client[k] || ""; });
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function save() { try { state.v = 4; localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
   function setYear(y) {
     formToState();
     state.cur = y;
@@ -737,7 +740,6 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     formToState();
     var cur = state.cur, inp = parseSet(state[cur]);
     var i25 = parseSet(state[2025]), i26 = parseSet(state[2026]);
-    i26.acconti = 0;
     $("tab2025").setAttribute("aria-selected", cur === "2025");
     $("tab2026").setAttribute("aria-selected", cur === "2026");
     $("tabnote").innerHTML = cur === "2025"
@@ -746,7 +748,11 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     $("rlWrap").hidden = inp.tipo !== "dip";
     $("contrattoWrap").style.visibility = inp.tipo === "dip" ? "visible" : "hidden";
     $("addRegWrap").hidden = inp.regione !== "custom";
-    $("accWrap").hidden = cur !== "2025";
+    $("accLabel").textContent = cur === "2025" ? "Acconti versati per il 2025 (RN38)" : "Acconti 2026 già versati";
+    $("accHint").textContent = cur === "2025"
+      ? "Prima e seconda rata versate nel 2025 per l'anno 2025: danno il saldo di giugno 2026. Non incidono sull'acconto 2026, che si calcola sul rigo RN34."
+      : "Prima rata di giugno/luglio ed eventuali altri versamenti per il 2026, anche compensati. Servono per la seconda rata e per stimare il saldo di giugno 2027. Vuoto: prima rata del metodo storico.";
+    $("acconti").placeholder = cur === "2026" ? "= 1ª rata storico" : "0";
 
     var a = calc(i25, 2025), b = calc(i26, 2026);
     var up = calc(Object.assign({}, i26, { reddito: i26.reddito + 100, redditoLav: i26.redditoLav > 0 ? i26.redditoLav + 100 : 0 }), 2026);
@@ -757,12 +763,16 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var acc = state.acc, isa = !!acc.isa;
     var baseSt = String(acc.rn34dich).trim() !== "" ? num(acc.rn34dich) : a.rn34;
     var st = accontoStorico(baseSt, isa);
-    var primo = String(acc.primo).trim() !== "" ? num(acc.primo) : st.r1;
+    var versatiSet = String(state[2026].acconti || "").trim() !== "";
+    var primo = versatiSet ? num(state[2026].acconti) : st.r1;
     var margine = Math.max(num(acc.margine), 0);
     var basePrev = Math.max(b.rn34, 0) * (1 + margine / 100);
     var prevTot = basePrev < 52 ? 0 : Math.round(basePrev);
     var prevR2 = Math.max(round2(prevTot - primo), 0);
-    var stR2 = st.due ? round2(st.tot - st.r1) : 0;
+    var stR2 = st.due ? Math.max(round2(st.tot - Math.max(primo, st.r1)), 0) : 0;
+    var rata2 = (state.client.metodo === "storico" || (state.client.metodo === "auto" && !(round2(stR2 - prevR2) > 0.5))) ? stR2 : prevR2;
+    var acc26 = round2(primo + rata2);
+    var saldo26 = round2(b.rn34 - acc26);
     var minor = round2(stR2 - prevR2);
 
     $("summary").innerHTML =
@@ -805,8 +815,8 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       ["total", "RN26", "Imposta netta", a.netta, b.netta],
       ["minus", "RN33", "Ritenute subite", i25.ritenute, i26.ritenute, any("ritenute") ? "" : "skip"],
       ["total", "RN34", "Differenza (base dell'acconto per l'anno successivo)", a.rn34, b.rn34],
-      ["minus", "RN38", "Acconti versati per l'anno", i25.acconti, null, i25.acconti > 0 ? "" : "skip"],
-      ["total", "", a.saldo >= 0 ? "Saldo IRPEF 2025 a debito" : "Saldo IRPEF 2025 a credito", a.saldo, null, i25.acconti > 0 ? "" : "skip"],
+      ["minus", "RN38", "Acconti per l'anno (2026: già versati + 2ª rata " + (rata2 === prevR2 && rata2 !== stR2 ? "previsionale" : "storico") + ")", i25.acconti, acc26],
+      ["total", "", "Saldo a debito (+) o a credito (−): giugno 2026 per il 2025, giugno 2027 stimato per il 2026", a.saldo, saldo26],
       ["sect", "", "Addizionali e carico complessivo"],
       ["plus", "RV2", "Addizionale regionale", a.addReg, b.addReg],
       ["plus", "RV10", "Addizionale comunale", a.addCom, b.addCom],
@@ -822,7 +832,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     });
     $("liq").innerHTML = html + "</tbody>";
 
-    renderAcconti({ st: st, baseSt: baseSt, fromDich: String(acc.rn34dich).trim() !== "", primo: primo, primoDefault: String(acc.primo).trim() === "", margine: margine, basePrev: basePrev, prevTot: prevTot, prevR2: prevR2, stR2: stR2, minor: minor, isa: isa, b: b });
+    renderAcconti({ st: st, baseSt: baseSt, fromDich: String(acc.rn34dich).trim() !== "", primo: primo, primoDefault: !versatiSet, saldo26: saldo26, rata2: rata2, rn34b: b.rn34, margine: margine, basePrev: basePrev, prevTot: prevTot, prevR2: prevR2, stR2: stR2, minor: minor, isa: isa, b: b });
     renderClient({ a: a, b: b, i25: i25, i26: i26, st: st, stR2: stR2, prevTot: prevTot, prevR2: prevR2, primo: primo, minor: minor, margine: margine, baseSt: baseSt, basePrev: basePrev, isa: isa });
     renderBrackets(a, b);
     renderChart(i26, b.Rc);
@@ -835,8 +845,12 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var rows = "";
     rows += "<tr><td>Base di calcolo</td><td>" + fm(x.baseSt) + '<br><small style="color:var(--muted)">RN34 2025' + (x.fromDich ? " dichiarato" : " calcolato") + "</small></td><td>" + fm(x.basePrev) + '<br><small style="color:var(--muted)">RN34 2026 stimato' + (x.margine ? " + " + x.margine + "%" : "") + "</small></td></tr>";
     rows += "<tr><td>Acconto dovuto (100%)</td><td>" + (x.st.due ? fm(x.st.tot) : "non dovuto (sotto 52 €)") + "</td><td>" + (x.prevTot ? fm(x.prevTot) : "non dovuto (sotto 52 €)") + "</td></tr>";
-    rows += "<tr><td>Prima rata, giugno/luglio 2026" + (x.st.unica ? " (unica soluzione a novembre)" : "") + "</td><td>" + fm(x.st.r1) + "</td><td>" + fm(x.primo) + '<br><small style="color:var(--muted)">' + (x.primoDefault ? "pari alla 1ª rata storico" : "versata") + "</small></td></tr>";
+    rows += '<tr class="dim"><td>Prima rata dovuta, giugno/luglio 2026' + (x.st.unica ? " (unica soluzione a novembre)" : "") + "</td><td>" + fm(x.st.r1) + "</td><td>—</td></tr>";
+    var vs = fm(x.primo) + '<br><small style="color:var(--muted)">' + (x.primoDefault ? "ipotesi: 1ª rata storico" : "inserito") + "</small>";
+    rows += "<tr><td>Acconti 2026 già versati</td><td>" + vs + "</td><td>" + vs + "</td></tr>";
     rows += '<tr class="grand"><td>Seconda rata entro il 30/11/2026 (cod. 4034)</td>' + td(fm(x.stR2), bestSt) + td(fm(x.prevR2), bestPrev) + "</tr>";
+    function sal(r2) { var v = round2(x.rn34b - x.primo - r2); return fm(Math.abs(v)) + '<br><small style="color:var(--muted)">' + (v >= 0 ? "a debito" : "a credito") + "</small>"; }
+    rows += "<tr><td>Saldo 2026 stimato, giugno 2027</td><td>" + sal(x.stR2) + "</td><td>" + sal(x.prevR2) + "</td></tr>";
     $("acctable").innerHTML = '<thead><tr><th>Voce</th><th>Metodo storico</th><th class="y26">Metodo previsionale</th></tr></thead><tbody>' + rows + "</tbody>";
 
     var n = [];
@@ -844,8 +858,10 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       n.push('<div class="notice" style="border-color:var(--accent);background:var(--accent-soft)"><b style="color:var(--accent)">Rideterminazione conveniente:</b> con il metodo previsionale la seconda rata scende da ' + fm(x.stR2) + " a " + fm(x.prevR2) + ", con " + fm(x.minor) + " in meno da versare." + (x.prevR2 === 0 && x.primo > x.prevTot ? " Con la prima rata hai già versato " + fm(x.primo - x.prevTot) + " più del necessario: l'eccedenza tornerà a credito nella dichiarazione 2027." : "") + "</div>");
       n.push('<div class="notice"><b>Rischio:</b> se l\'imposta 2026 effettiva (RN34 della dichiarazione Redditi PF 2027) supera gli acconti versati, sulla parte non versata si applicano la sanzione per omesso o insufficiente versamento del 25% (art. 13 D.Lgs. 471/1997) e gli interessi, riducibili con il ravvedimento operoso. Il margine di prudenza serve a coprire questo rischio.</div>');
     } else if (x.st.due) {
+      if (!x.primoDefault && x.primo > x.st.r1 + 0.5) n.push('<div class="notice"><b>Versato più della prima rata:</b> con il metodo storico la seconda rata è ridotta della parte già versata in eccesso (' + fm(x.primo - x.st.r1) + ").</div>");
       n.push('<div class="notice"><b>Nessun vantaggio dal previsionale:</b> l\'imposta 2026 stimata non è inferiore alla base storica. Conviene versare la seconda rata del metodo storico, che mette al riparo da sanzioni.</div>');
     }
+    if (!x.primoDefault && x.st.due && !x.st.unica && x.primo < x.st.r1 - 0.5) n.push('<div class="notice"><b>Prima rata inferiore al metodo storico:</b> hai versato ' + fm(x.primo) + " invece di " + fm(x.st.r1) + ". È corretto solo se l'imposta 2026 effettiva lo giustifica (metodo previsionale); altrimenti la differenza va regolarizzata con il ravvedimento operoso.</div>");
     n.push('<p class="sub" style="margin:0">Restano fuori dal confronto gli acconti di cedolare secca, imposta sostitutiva del regime forfettario e contributi INPS, che hanno basi e calcoli propri. Ricorda che la scheda 2026 applica già l\'aliquota del 33% e le altre regole 2026.</p>');
     $("accnote").innerHTML = n.join("");
   }
@@ -898,8 +914,10 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     h += "<h2>Il confronto tra i due metodi</h2><table><thead><tr><th></th><th>Metodo storico</th><th>Metodo previsionale</th></tr></thead><tbody>";
     h += '<tr><td>Imposta di riferimento</td><td class="n">' + fm(x.baseSt) + '</td><td class="n">' + fm(x.basePrev) + "</td></tr>";
     h += '<tr><td>Acconto totale per il 2026</td><td class="n">' + fm(x.st.tot) + '</td><td class="n">' + fm(x.prevTot) + "</td></tr>";
-    h += '<tr><td>Prima rata (giugno/luglio)</td><td class="n">' + fm(x.st.r1) + '</td><td class="n">' + fm(x.primo) + "</td></tr>";
-    h += '<tr class="tot"><td>Seconda rata (30 novembre)</td><td class="n' + (d.metodo === "storico" ? " hl" : "") + '">' + fm(x.stR2) + '</td><td class="n' + (d.metodo === "prev" ? " hl" : "") + '">' + fm(x.prevR2) + "</td></tr></tbody></table>";
+    h += '<tr><td>Acconti 2026 già versati</td><td class="n">' + fm(x.primo) + '</td><td class="n">' + fm(x.primo) + "</td></tr>";
+    h += '<tr class="tot"><td>Seconda rata (30 novembre)</td><td class="n' + (d.metodo === "storico" ? " hl" : "") + '">' + fm(x.stR2) + '</td><td class="n' + (d.metodo === "prev" ? " hl" : "") + '">' + fm(x.prevR2) + "</td></tr>";
+    function sal(r2) { var v = round2(x.b.rn34 - x.primo - r2); return fm(Math.abs(v)) + (v >= 0 ? " a debito" : " a credito"); }
+    h += '<tr><td>Saldo 2026 stimato (giugno 2027)</td><td class="n">' + sal(x.stR2) + '</td><td class="n">' + sal(x.prevR2) + "</td></tr></tbody></table>";
 
     h += "<h2>Le tue imposte: 2025 dichiarato e stima 2026</h2><table><thead><tr><th></th><th>2025</th><th>2026 (stima)</th></tr></thead><tbody>";
     [["Reddito complessivo", a.Rc, b.Rc], ["Oneri deducibili", a.rn3 + a.rn2, b.rn3 + b.rn2], ["Reddito imponibile", a.imp, b.imp], ["Imposta lorda", a.lordo, b.lordo], ["Detrazioni", a.rn22, b.rn22], ["Imposta netta (IRPEF)", a.netta, b.netta, 1], ["Ritenute già subite", x.i25.ritenute, x.i26.ritenute], ["Imposta residua (base dell'acconto)", a.rn34, b.rn34, 1], ["Addizionali regionale e comunale", a.addReg + a.addCom, b.addReg + b.addCom], ["Carico fiscale complessivo", a.carico, b.carico, 1]].forEach(function (r) {
@@ -931,7 +949,10 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     L.push("DA VERSARE ENTRO LUNEDÌ 30 NOVEMBRE 2026");
     L.push("Seconda rata acconto IRPEF 2026 - F24 codice tributo 4034, anno 2026: " + (d.rata > 0 ? fm(d.rata) : "nulla da versare"));
     L.push("");
+    L.push("Acconti 2026 già versati: " + fm(x.primo) + ".");
     L.push("Confronto: metodo storico " + fm(x.stR2) + " / metodo previsionale " + fm(x.prevR2) + ".");
+    var sv = round2(b.rn34 - x.primo - d.rata);
+    L.push("Saldo 2026 stimato a giugno 2027: " + fm(Math.abs(sv)) + (sv >= 0 ? " a debito." : " a credito."));
     L.push("Imposta netta 2025 dichiarata: " + fm(a.netta) + " - Imposta netta 2026 stimata: " + fm(b.netta) + ".");
     if (d.metodo === "prev") {
       L.push("");
@@ -1048,6 +1069,11 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
   $("f").addEventListener("input", render);
   $("f").addEventListener("change", render);
   $("f").addEventListener("submit", function (e) { e.preventDefault(); });
+  $("primo").addEventListener("input", function () {
+    state[2026].acconti = $("primo").value;
+    if (state.cur === "2026") $("acconti").value = $("primo").value;
+  });
+  $("acconti").addEventListener("input", function () { if (state.cur === "2026") $("primo").value = $("acconti").value; });
   $("accCard").addEventListener("input", render);
   $("clientCard").addEventListener("input", function (e) { if (e.target.id !== "copyFallback") render(); });
   $("clientCard").addEventListener("change", function (e) { if (e.target.id !== "copyFallback") render(); });
@@ -1063,7 +1089,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     else if (t.id === "copyBtn") {
       formToState();
       var to = t.dataset.to, from = to === "2026" ? "2025" : "2026";
-      state[to] = Object.assign({}, state[from], to === "2026" ? { acconti: "0" } : {});
+      state[to] = Object.assign({}, state[from], { acconti: to === "2026" ? (state[2026].acconti || "") : state[2025].acconti });
       if (to === state.cur) stateToForm();
       render();
     }
