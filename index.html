@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: banda d'intestazione, poi due colonne — modulo dati a sinistra (sticky), quadro di liquidazione 2025/2026 a destra; una colonna sotto 900px */
+/* Layout: banda d'intestazione, poi due colonne — modulo dati a sinistra (sticky, scorrevole), quadro di liquidazione RN/RV 2025-2026 a destra; una colonna sotto 900px */
 :root {
   --paper: #f3f5f2;
   --sheet: #ffffff;
@@ -33,8 +33,9 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
-.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 header.top { border-bottom: 1px solid var(--line); background: var(--sheet); }
 header.top .wrap { padding-block: 22px 18px; display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
 .brand { display: flex; flex-direction: column; gap: 2px; }
@@ -47,31 +48,32 @@ h1 span { color: var(--accent); }
 .rate.changed { border-color: var(--accent); background: var(--accent-soft); }
 .rate s { color: var(--old); margin-right: 4px; }
 
-main.wrap { padding-block: 24px 48px; display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 24px; align-items: start; }
+main.wrap { padding-block: 24px 48px; display: grid; grid-template-columns: minmax(290px, 370px) minmax(0, 1fr); gap: 24px; align-items: start; }
 @media (max-width: 900px) { main.wrap { grid-template-columns: minmax(0, 1fr); } }
 
 /* Modulo */
-form.panel { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
-@media (max-width: 900px) { form.panel { position: static; } }
+form.panel { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 20px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; }
+@media (max-width: 900px) { form.panel { position: static; max-height: none; overflow: visible; } }
 fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-legend { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 10px; }
-.field { display: flex; flex-direction: column; gap: 4px; }
+legend { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 10px; display: flex; gap: 8px; align-items: baseline; }
+legend code { font: 500 11px var(--font-num); letter-spacing: 0; color: var(--accent); }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .field label { font-size: 13px; font-weight: 500; }
 .field small { color: var(--muted); font-size: 12px; line-height: 1.35; }
 .inp { position: relative; }
 .inp input, select { width: 100%; font: 500 15px var(--font-num); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; font-variant-numeric: tabular-nums; }
-.inp input { padding-right: 30px; text-align: right; }
-.inp .unit { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font: 13px var(--font-num); pointer-events: none; }
-select { font-family: var(--font-body); }
+.inp input { padding-right: 34px; text-align: right; }
+.inp .unit { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font: 12px var(--font-num); pointer-events: none; }
+select { font-family: var(--font-body); font-size: 14px; }
 input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font: 500 12.5px var(--font-num); border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
 .chip:hover { border-color: var(--accent); color: var(--accent); }
-.check { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+.check { display: flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 500; }
 .check input { accent-color: var(--accent); width: 16px; height: 16px; }
 .reset { align-self: flex-start; font: 500 13px var(--font-body); background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0; }
-.hidden-dip[hidden] { display: none !important; }
+.sub-box { border-left: 2px solid var(--line); padding-left: 10px; display: flex; flex-direction: column; gap: 10px; }
 
 /* Risultati */
 .results { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
@@ -79,7 +81,7 @@ input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px s
 @media (max-width: 640px) { .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .kpi { background: var(--sheet); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .kpi .k { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-.kpi .v { font: 600 clamp(17px, 1.9vw, 21px) var(--font-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kpi .v { font: 600 clamp(16px, 1.8vw, 21px) var(--font-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .kpi .s { font-size: 12px; color: var(--muted); }
 .kpi.hero .v { color: var(--accent); }
 .pos { color: var(--accent); }
@@ -89,19 +91,20 @@ section.card { background: var(--sheet); border: 1px solid var(--line); border-r
 section.card h2 { font-family: var(--font-display); font-weight: 700; font-size: 17px; margin: 0 0 4px; text-wrap: balance; }
 section.card p.sub { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
 .tablewrap { overflow-x: auto; }
-table.liq { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 520px; }
+table.liq { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 560px; }
 table.liq th, table.liq td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
 table.liq th:first-child, table.liq td:first-child { text-align: left; white-space: normal; }
 table.liq thead th { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 2px solid var(--ink); }
 table.liq thead th.y26 { color: var(--accent); }
 table.liq td { font-family: var(--font-num); font-size: 13.5px; }
 table.liq td:first-child { font-family: var(--font-body); font-size: 14px; }
-table.liq td .code { font: 11px var(--font-num); color: var(--muted); margin-right: 6px; }
-table.liq tr.minus td:first-child::before { content: "− "; color: var(--muted); }
-table.liq tr.plus td:first-child::before { content: "+ "; color: var(--muted); }
+table.liq .code { display: inline-block; min-width: 42px; font: 500 11px var(--font-num); color: var(--accent); }
+table.liq tr.minus td:first-child .lbl::before { content: "− "; color: var(--muted); }
+table.liq tr.plus td:first-child .lbl::before { content: "+ "; color: var(--muted); }
 table.liq tr.total td { font-weight: 600; border-bottom: 2px solid var(--ink); }
 table.liq tr.grand td { font-weight: 600; font-size: 15px; background: var(--accent-soft); border-bottom: 0; }
 table.liq tr.dim td { color: var(--muted); }
+table.liq tr.sect td { font: 600 11px var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding-top: 16px; border-bottom: 1px solid var(--line); }
 
 .brackets { display: flex; flex-direction: column; gap: 10px; }
 .brow { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; align-items: center; }
@@ -113,7 +116,7 @@ table.liq tr.dim td { color: var(--muted); }
 .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
 .bdetail { margin-top: 12px; }
 .bdetail table { min-width: 680px; }
-.bdetail td:first-child { white-space: nowrap; }
+#btable td:first-child { white-space: nowrap; }
 
 .chartbox svg { width: 100%; height: auto; display: block; }
 .chartbox .axis text { fill: var(--muted); font: 11px var(--font-num); }
@@ -121,11 +124,14 @@ table.liq tr.dim td { color: var(--muted); }
 .chart-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--muted); margin-top: 6px; }
 .chart-legend i { display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: 3px; border-radius: 2px; }
 
+#alerts { display: flex; flex-direction: column; gap: 8px; }
+#alerts:empty { display: none; }
 .notice { border: 1px solid var(--warn); background: var(--warn-soft); color: var(--ink); border-radius: 6px; padding: 10px 12px; font-size: 13px; }
 .notice b { color: var(--warn); }
 .notes { font-size: 13px; color: var(--muted); }
-.notes ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 80ch; }
+.notes ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 82ch; }
 .notes b { color: var(--ink); font-weight: 600; }
+.notes h3 { font: 600 12px var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 16px 0 6px; }
 footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .seg { transition: flex-basis .25s ease; } }
 </style>
@@ -133,7 +139,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
 <header class="top">
   <div class="wrap">
     <div class="brand">
-      <span class="eyebrow">Persone fisiche · confronto 2025 / 2026</span>
+      <span class="eyebrow">Persone fisiche · quadri RN e RV · confronto 2025 / 2026</span>
       <h1>Calcolo <span>IRPEF 2026</span></h1>
     </div>
     <div class="rates" aria-label="Aliquote 2026">
@@ -147,80 +153,155 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
 <main class="wrap">
   <form class="panel" id="f" autocomplete="off">
     <fieldset>
-      <legend>Reddito</legend>
+      <legend>Redditi <code>RN1–RN4</code></legend>
       <div class="field">
-        <label for="reddito">Reddito complessivo</label>
+        <label for="reddito">Reddito complessivo (RN1 col. 5)</label>
         <div class="inp"><input id="reddito" inputmode="decimal" value="45000"><span class="unit">€</span></div>
         <div class="chips" id="chips"></div>
       </div>
       <div class="field">
-        <label for="deducibili">Oneri deducibili</label>
-        <div class="inp"><input id="deducibili" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        <small>Contributi, previdenza complementare ecc. Riducono l'imponibile.</small>
+        <label for="abitaz">Deduzione abitazione principale (RN2)</label>
+        <div class="inp"><input id="abitaz" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Rendita dell'abitazione principale e pertinenze (rigo RB10 col. 18).</small>
       </div>
+      <div class="row2">
+        <div class="field">
+          <label for="deducibili">Oneri deducibili</label>
+          <div class="inp"><input id="deducibili" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+        <div class="field">
+          <label for="prev">Previdenza compl.</label>
+          <div class="inp"><input id="prev" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+      </div>
+      <small style="color:var(--muted);font-size:12px;margin-top:-6px">La previdenza complementare è dedotta fino a 5.164,57 € nel 2025 e 5.300 € nel 2026.</small>
+      <div class="field">
+        <label for="cedolare">Redditi a cedolare secca o forfetari</label>
+        <div class="inp"><input id="cedolare" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Non sono tassati qui, ma si sommano al reddito di riferimento per detrazioni e soglie (RN1 col. 1).</small>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lavoro e pensione <code>RN7</code></legend>
       <div class="field">
         <label for="tipo">Tipo di reddito prevalente</label>
         <select id="tipo">
           <option value="dip">Lavoro dipendente</option>
           <option value="pens">Pensione</option>
-          <option value="aut">Lavoro autonomo / altri redditi</option>
+          <option value="aut">Lavoro autonomo, impresa semplificata, altri redditi</option>
           <option value="none">Nessuna detrazione per tipo di reddito</option>
         </select>
       </div>
       <div class="row2">
         <div class="field">
-          <label for="giorni">Giorni nell'anno</label>
+          <label for="giorni">Giorni (RC6)</label>
           <div class="inp"><input id="giorni" inputmode="numeric" value="365"><span class="unit">gg</span></div>
         </div>
-        <div class="field hidden-dip" id="rlWrap">
-          <label for="redditoLav">di cui lav. dip.</label>
-          <div class="inp"><input id="redditoLav" inputmode="decimal" placeholder="= complessivo"><span class="unit">€</span></div>
+        <div class="field" id="contrattoWrap">
+          <label for="contratto">Contratto</label>
+          <select id="contratto"><option value="ti">Indeterminato</option><option value="td">Determinato</option></select>
         </div>
+      </div>
+      <div class="field" id="rlWrap">
+        <label for="redditoLav">di cui reddito di lavoro dipendente</label>
+        <div class="inp"><input id="redditoLav" inputmode="decimal" placeholder="= complessivo"><span class="unit">€</span></div>
+        <small>Base della somma esente del cuneo fiscale.</small>
       </div>
     </fieldset>
 
     <fieldset>
-      <legend>Detrazioni per oneri</legend>
-      <div class="field">
-        <label for="nonRid">Detrazioni non soggette a riduzione</label>
-        <div class="inp"><input id="nonRid" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        <small>Es. interessi mutuo abitazione principale, spese sanitarie, bonus edilizi.</small>
-      </div>
-      <div class="field">
-        <label for="altre">Altre detrazioni (19% ecc.)</label>
-        <div class="inp"><input id="altre" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        <small>Ridotte proporzionalmente tra 120.000 e 240.000 € di reddito.</small>
-      </div>
-      <div class="field">
-        <label for="esenti440">di cui escluse dal taglio di 440 €</label>
-        <div class="inp"><input id="esenti440" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        <small>Rileva solo nel 2026, per redditi oltre 200.000 €.</small>
+      <legend>Familiari a carico <code>RN6</code></legend>
+      <div class="row2">
+        <label class="check"><input type="checkbox" id="coniuge"> Coniuge a carico</label>
+        <div class="field">
+          <label for="mesiConiuge">Mesi</label>
+          <div class="inp"><input id="mesiConiuge" inputmode="numeric" value="12"><span class="unit">m</span></div>
+        </div>
       </div>
       <div class="row2">
         <div class="field">
-          <label for="figli">Figli a carico</label>
-          <div class="inp"><input id="figli" inputmode="numeric" value="0"><span class="unit">n.</span></div>
+          <label for="figliDetr">Figli 21–29 anni</label>
+          <div class="inp"><input id="figliDetr" inputmode="numeric" value="0"><span class="unit">n.</span></div>
         </div>
-        <label class="check" style="align-self:end;padding-bottom:10px"><input type="checkbox" id="disabile"> con disabilità</label>
+        <div class="field">
+          <label for="percFigli">Ripartizione</label>
+          <select id="percFigli"><option value="100">100%</option><option value="50">50%</option></select>
+        </div>
       </div>
+      <small style="color:var(--muted);font-size:12px;margin-top:-6px">Includi i figli dai 30 anni in su con disabilità (L. 104/1992). Sotto i 21 anni c'è l'assegno unico.</small>
+      <div class="row2">
+        <div class="field">
+          <label for="figliTot">Figli a carico, totale</label>
+          <div class="inp"><input id="figliTot" inputmode="numeric" value="0"><span class="unit">n.</span></div>
+        </div>
+        <div class="field">
+          <label for="ascendenti">Ascendenti conviventi</label>
+          <div class="inp"><input id="ascendenti" inputmode="numeric" value="0"><span class="unit">n.</span></div>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="disabile"> Almeno un figlio con disabilità</label>
     </fieldset>
 
     <fieldset>
-      <legend>Addizionali</legend>
+      <legend>Oneri detraibili <code>RP → RN13–RN17</code></legend>
       <div class="row2">
         <div class="field">
-          <label for="addReg">Regionale</label>
-          <div class="inp"><input id="addReg" inputmode="decimal" value="1,23"><span class="unit">%</span></div>
+          <label for="sanitarie">Spese sanitarie</label>
+          <div class="inp"><input id="sanitarie" inputmode="decimal" value="1200"><span class="unit">€</span></div>
         </div>
         <div class="field">
-          <label for="addCom">Comunale</label>
+          <label for="mutuo">Interessi mutuo</label>
+          <div class="inp"><input id="mutuo" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+      </div>
+      <small style="color:var(--muted);font-size:12px;margin-top:-6px">19% oltre la franchigia di 129,11 €; interessi del mutuo per l'abitazione principale fino a 4.000 €.</small>
+      <div class="field">
+        <label for="spese19">Altre spese al 19% (importo speso)</label>
+        <div class="inp"><input id="spese19" inputmode="decimal" value="800"><span class="unit">€</span></div>
+        <small>Istruzione, sport dei figli, assicurazioni ecc. Soggette al tetto oltre 75.000 €, alla riduzione tra 120.000 e 240.000 € e, nel 2026, al taglio di 440 €.</small>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="edilizi">Rata bonus edilizi</label>
+          <div class="inp"><input id="edilizi" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+        <div class="field">
+          <label for="altreDetr">Altre detrazioni</label>
+          <div class="inp"><input id="altreDetr" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+      </div>
+      <small style="color:var(--muted);font-size:12px;margin-top:-6px">Importi di detrazione già calcolati: rata annua dei bonus edilizi (RN14–RN16) e altre detrazioni (canoni, erogazioni ecc.).</small>
+    </fieldset>
+
+    <fieldset>
+      <legend>Addizionali <code>RV</code></legend>
+      <div class="field">
+        <label for="regione">Regione</label>
+        <select id="regione"></select>
+      </div>
+      <div class="field" id="addRegWrap">
+        <label for="addReg">Aliquota regionale</label>
+        <div class="inp"><input id="addReg" inputmode="decimal" value="1,23"><span class="unit">%</span></div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="addCom">Aliquota comunale</label>
           <div class="inp"><input id="addCom" inputmode="decimal" value="0,8"><span class="unit">%</span></div>
         </div>
+        <div class="field">
+          <label for="esenzCom">Esenzione fino a</label>
+          <div class="inp"><input id="esenzCom" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
       </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Versamenti <code>RN33</code></legend>
       <div class="field">
-        <label for="esenzCom">Soglia di esenzione comunale</label>
-        <div class="inp"><input id="esenzCom" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        <small>Aliquote medie: verificare la delibera della propria Regione e del proprio Comune.</small>
+        <label for="ritenute">Ritenute e acconti IRPEF già versati</label>
+        <div class="inp"><input id="ritenute" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Dalla Certificazione Unica e dagli F24: serve a calcolare il saldo a debito o a credito.</small>
       </div>
     </fieldset>
     <button type="button" class="reset" id="reset">Ripristina l'esempio</button>
@@ -232,13 +313,13 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
 
     <section class="card">
       <h2>Quadro di liquidazione</h2>
-      <p class="sub">Stesso reddito, regole 2025 e regole 2026 a confronto.</p>
+      <p class="sub">Stesso contribuente, regole 2025 (modello Redditi PF 2026) e regole 2026 a confronto. I codici rinviano ai righi del modello.</p>
       <div class="tablewrap"><table class="liq" id="liq"></table></div>
     </section>
 
     <section class="card">
       <h2>Imposta lorda per scaglione</h2>
-      <p class="sub">Quanto reddito cade in ciascuno scaglione e quanta imposta genera.</p>
+      <p class="sub">Quanto reddito imponibile cade in ciascuno scaglione e quanta imposta genera (rigo RN5).</p>
       <div class="brackets" id="brackets"></div>
       <div class="legend" id="blegend"></div>
       <div class="tablewrap bdetail"><table class="liq" id="btable"></table></div>
@@ -246,45 +327,84 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
 
     <section class="card">
       <h2>Risparmio 2026 al variare del reddito</h2>
-      <p class="sub">Differenza di IRPEF netta tra regole 2025 e 2026, con le altre voci del modulo invariate. Il punto indica il reddito inserito.</p>
+      <p class="sub">Differenza di IRPEF netta (RN26) tra regole 2025 e 2026, con le altre voci del modulo invariate. Il punto indica il reddito inserito.</p>
       <div class="chartbox" id="chart"></div>
-      <div class="chart-legend"><span><i style="background:var(--accent)"></i>Risparmio IRPEF netta (€)</span><span><i style="background:var(--old)"></i>Massimo teorico dallo scaglione: 440 €</span></div>
+      <div class="chart-legend"><span><i style="background:var(--accent)"></i>Risparmio IRPEF netta (€)</span><span><i style="background:var(--old)"></i>Beneficio massimo del nuovo scaglione: 440 €</span></div>
     </section>
 
     <section class="card notes">
       <h2>Regole applicate</h2>
+      <h3>Imposta e detrazioni (quadro RN)</h3>
       <ol>
-        <li><b>Scaglioni:</b> 23% fino a 28.000 €, 33% (35% nel 2025) da 28.000 a 50.000 €, 43% oltre 50.000 € (art. 11 TUIR, Legge di Bilancio 2026).</li>
-        <li><b>Detrazioni lavoro dipendente</b> (art. 13 TUIR): 1.955 € fino a 15.000 €; 1.910 + 1.190 × (28.000 − R)/13.000 fino a 28.000 €; 1.910 × (50.000 − R)/22.000 fino a 50.000 €; +65 € tra 25.000 e 35.000 €. Rapportate ai giorni. Il minimo di 690/1.380 € per redditi fino a 15.000 € non è applicato.</li>
-        <li><b>Detrazioni pensione:</b> 1.955 € fino a 8.500 €; 700 + 1.255 × (28.000 − R)/19.500 fino a 28.000 €; 700 × (50.000 − R)/22.000 fino a 50.000 €; +50 € tra 25.000 e 29.000 €.</li>
-        <li><b>Detrazioni lavoro autonomo e altri redditi:</b> 1.265 € fino a 5.500 €; 500 + 765 × (28.000 − R)/22.500 fino a 28.000 €; 500 × (50.000 − R)/22.000 fino a 50.000 €; +50 € tra 11.000 e 17.000 €.</li>
-        <li><b>Taglio del cuneo</b> (L. 207/2024): somma esente del 7,1% / 5,3% / 4,8% del reddito di lavoro dipendente se il reddito complessivo non supera 20.000 €; ulteriore detrazione di 1.000 € tra 20.000 e 32.000 €, decrescente fino a zero a 40.000 €. La somma esente non riduce l'IRPEF: è indicata a parte e sottratta dal carico netto.</li>
-        <li><b>Detrazioni per oneri:</b> spettano per intero fino a 120.000 € e si riducono a zero a 240.000 €. Oltre 75.000 € vale il tetto agli oneri detraibili (14.000 € fino a 100.000 €, 8.000 € oltre) moltiplicato per 0,50 / 0,70 / 0,85 / 1 secondo i figli a carico.</li>
-        <li><b>Neutralizzazione oltre 200.000 €</b> (solo 2026): le detrazioni per oneri sono ridotte di 440 €, pari al beneficio massimo del nuovo secondo scaglione.</li>
-        <li><b>Addizionali:</b> dovute solo se l'IRPEF netta è positiva, calcolate sull'imponibile con aliquota unica. Le Regioni e i Comuni che usano aliquote per scaglioni richiedono un calcolo dedicato.</li>
+        <li><b>RN4–RN5:</b> imponibile = RN1 − RN2 − RN3. Scaglioni 23% fino a 28.000 €, 35% (2025) o 33% (2026) fino a 50.000 €, 43% oltre. Quota fissa: 6.440 € al secondo scaglione; 14.140 € (2025) o 13.700 € (2026) al terzo.</li>
+        <li><b>Reddito per detrazioni:</b> RN1 col. 1 − RN2, comprensivo dei redditi a cedolare secca e forfetari. I quozienti delle formule sono troncati alla quarta cifra decimale, come indicato nelle istruzioni.</li>
+        <li><b>RN6 coniuge:</b> fino a 15.000 € 800 − 110 × R/15.000; fino a 40.000 € 690 € più una maggiorazione da 10 a 30 € tra 29.000 e 35.200 €; fino a 80.000 € 690 × (80.000 − R)/40.000. In dodicesimi per i mesi a carico, salvo la maggiorazione.</li>
+        <li><b>RN6 figli e ascendenti:</b> 950 € per figlio di 21–29 anni (o dai 30 anni con disabilità) × (95.000 + 15.000 per ogni figlio oltre il primo − R)/(stessa base), per la percentuale di spettanza. Ascendenti conviventi: 750 × (80.000 − R)/80.000.</li>
+        <li><b>RN7 lavoro dipendente:</b> 1.955 € fino a 15.000 € (minimo 690 € a tempo indeterminato, 1.380 € a tempo determinato); 1.910 + 1.190 × (28.000 − R)/13.000; 1.910 × (50.000 − R)/22.000; +65 € tra 25.000 e 35.000 €. In 365esimi per i giorni.</li>
+        <li><b>RN7 pensione:</b> 1.955 € fino a 8.500 € (minimo 713 €); 700 + 1.255 × (28.000 − R)/19.500; 700 × (50.000 − R)/22.000; +50 € tra 25.000 e 29.000 € (art. 13 c. 4 TUIR). <b>Altri redditi:</b> 1.265 € fino a 5.500 €; 500 + 765 × (28.000 − R)/22.500; 500 × (50.000 − R)/22.000; +50 € tra 11.000 e 17.000 €.</li>
+        <li><b>RN7 col. 5, cuneo fiscale</b> (L. 207/2024): somma esente del 7,1% / 5,3% / 4,8% del reddito di lavoro dipendente se il reddito non supera 20.000 €; ulteriore detrazione di 1.000 € fino a 32.000 €, decrescente fino a zero a 40.000 €. La somma esente non riduce l'IRPEF: è esposta a parte.</li>
+        <li><b>RN13 oneri:</b> spese sanitarie al 19% oltre 129,11 €; interessi del mutuo al 19% fino a 4.000 €; altre spese al 19% ridotte in proporzione tra 120.000 e 240.000 €. Oltre 75.000 € le altre spese sono ammesse fino al tetto dell'art. 16-ter TUIR: 14.000 € (fino a 100.000 €) o 8.000 €, per un coefficiente di 0,50 / 0,70 / 0,85 / 1 secondo i figli a carico (1 con un figlio con disabilità).</li>
+        <li><b>Solo 2026, oltre 200.000 €:</b> le detrazioni per le altre spese al 19% sono ridotte di 440 €, il beneficio massimo del nuovo secondo scaglione. Escluse spese sanitarie e bonus edilizi.</li>
+        <li><b>RN26–RN34:</b> imposta netta = RN5 − RN22, non inferiore a zero. Le detrazioni che eccedono l'imposta lorda vanno perse. Saldo = imposta netta − ritenute e acconti.</li>
+      </ol>
+      <h3>Addizionali (quadro RV)</h3>
+      <ol>
+        <li>Dovute solo se l'IRPEF netta supera 10,33 €. Base: RN1 − RN2 − RN3.</li>
+        <li><b>Regionale:</b> aliquote e scaglioni dalla tabella del modello Redditi PF 2026, anno d'imposta 2025. Gestiti i casi di Friuli Venezia Giulia, Lazio, Trento, Valle d'Aosta e la detrazione base di Bolzano; le altre detrazioni regionali per figli o disabilità non sono applicate. Le stesse aliquote sono usate anche per il 2026: verifica eventuali delibere regionali successive.</li>
+        <li><b>Comunale:</b> aliquota unica sull'intero imponibile, se l'imponibile supera la soglia di esenzione deliberata dal Comune. L'acconto per l'anno successivo è il 30%.</li>
       </ol>
     </section>
   </div>
 </main>
-<footer class="wrap">Simulazione indicativa: non sostituisce la dichiarazione dei redditi né il calcolo del sostituto d'imposta. Non considera detrazioni per carichi di famiglia, crediti d'imposta e redditi a tassazione separata o sostitutiva.</footer>
+<footer class="wrap">Simulazione indicativa basata sulle istruzioni del modello Redditi PF 2026 (fascicoli 1–3) e sulla Legge di Bilancio 2026. Non sostituisce la dichiarazione né il calcolo del sostituto d'imposta. Non considera crediti d'imposta, redditi a tassazione separata, agevolazioni ACE e altri casi particolari del quadro RN.</footer>
 
 <script>
 (function () {
   "use strict";
   var YEARS = {
-    2025: { lim: [0, 28000, 50000], al: [0.23, 0.35, 0.43], cut440: false },
-    2026: { lim: [0, 28000, 50000], al: [0.23, 0.33, 0.43], cut440: true }
+    2025: { lim: [0, 28000, 50000], al: [0.23, 0.35, 0.43], cut440: false, prevCap: 5164.57 },
+    2026: { lim: [0, 28000, 50000], al: [0.23, 0.33, 0.43], cut440: true, prevCap: 5300 }
   };
-  var DEFAULTS = { reddito: "45000", deducibili: "0", tipo: "dip", giorni: "365", redditoLav: "", nonRid: "0", altre: "0", esenti440: "0", figli: "0", disabile: false, addReg: "1,23", addCom: "0,8", esenzCom: "0" };
+  // Tabella aliquote addizionale regionale, anno d'imposta 2025 (Redditi PF 2026, fasc. 1)
+  var REGIONI = [
+    ["01", "Abruzzo", [0, 28000, 50000], [1.67, 2.87, 3.33]],
+    ["02", "Basilicata", [0], [1.23]],
+    ["03", "Bolzano", [0, 50000], [1.23, 1.73], "bz"],
+    ["04", "Calabria", [0], [1.73]],
+    ["05", "Campania", [0, 15000, 28000, 50000], [1.73, 2.96, 3.20, 3.33]],
+    ["06", "Emilia-Romagna", [0, 15000, 28000, 50000], [1.33, 1.93, 2.93, 3.33]],
+    ["07", "Friuli Venezia Giulia", [0], [1.23], "fvg"],
+    ["08", "Lazio", [0, 15000], [1.73, 3.33], "lazio"],
+    ["09", "Liguria", [0, 28000, 50000], [1.23, 3.18, 3.23]],
+    ["10", "Lombardia", [0, 15000, 28000, 50000], [1.23, 1.58, 1.72, 1.73]],
+    ["11", "Marche", [0, 15000, 28000, 50000], [1.23, 1.53, 1.70, 1.73]],
+    ["12", "Molise", [0, 15000, 28000], [2.03, 2.23, 3.63]],
+    ["13", "Piemonte", [0, 15000, 28000, 50000], [1.62, 2.13, 2.75, 3.33]],
+    ["14", "Puglia", [0, 15000, 28000, 50000], [1.33, 1.43, 1.63, 1.85]],
+    ["15", "Sardegna", [0], [1.23]],
+    ["16", "Sicilia", [0], [1.23]],
+    ["17", "Toscana", [0, 15000, 28000, 50000], [1.42, 1.43, 3.32, 3.33]],
+    ["18", "Trento", [0, 50000], [1.23, 1.73], "tn"],
+    ["19", "Umbria", [0, 15000, 28000, 50000], [1.73, 3.02, 3.12, 3.33]],
+    ["20", "Valle d'Aosta", [0], [1.23], "vda"],
+    ["21", "Veneto", [0], [1.23]]
+  ];
+  var REGMAP = {};
+  REGIONI.forEach(function (r) { REGMAP[r[0]] = r; });
+
+  var DEFAULTS = { reddito: "45000", abitaz: "0", deducibili: "0", prev: "0", cedolare: "0", tipo: "dip", giorni: "365", contratto: "ti", redditoLav: "",
+    coniuge: false, mesiConiuge: "12", figliDetr: "0", percFigli: "100", figliTot: "0", ascendenti: "0", disabile: false,
+    sanitarie: "1200", mutuo: "0", spese19: "800", edilizi: "0", altreDetr: "0", regione: "custom", addReg: "1,23", addCom: "0,8", esenzCom: "0", ritenute: "0" };
   var IDS = Object.keys(DEFAULTS);
-  var KEY = "irpef2026-inputs";
+  var CHECKS = { coniuge: 1, disabile: 1 };
+  var SELECTS = { tipo: 1, contratto: 1, percFigli: 1, regione: 1 };
+  var KEY = "irpef2026-inputs-v2";
   var $ = function (id) { return document.getElementById(id); };
 
   var eur = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
   var eur0 = new Intl.NumberFormat("it-IT", { maximumFractionDigits: 0 });
   var pct = new Intl.NumberFormat("it-IT", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 });
   function fm(v) { return eur.format(Math.abs(v) < 0.005 ? 0 : v); }
-
   function num(s) {
     if (s == null) return 0;
     s = String(s).trim().replace(/\s|€|%/g, "");
@@ -294,72 +414,143 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var n = parseFloat(s);
     return isFinite(n) ? n : 0;
   }
+  function t4(x) { return Math.floor(x * 10000 + 1e-9) / 10000; } // prime quattro cifre decimali
+  function clamp(x, a, b) { return Math.min(Math.max(x, a), b); }
+
+  // Regione select
+  (function () {
+    var sel = $("regione"), h = '<option value="custom">Aliquota unica personalizzata</option>';
+    REGIONI.forEach(function (r) { h += '<option value="' + r[0] + '">' + r[1] + "</option>"; });
+    sel.innerHTML = h;
+  })();
 
   // ---- Motore di calcolo ----
-  function detLavoro(tipo, R) {
-    var d = 0;
-    if (tipo === "dip") {
-      if (R <= 15000) d = 1955;
-      else if (R <= 28000) d = 1910 + 1190 * (28000 - R) / 13000;
-      else if (R <= 50000) d = 1910 * (50000 - R) / 22000;
+  function progressive(base, lim, al) {
+    var t = 0;
+    for (var i = 0; i < lim.length; i++) {
+      var hi = i + 1 < lim.length ? lim[i + 1] : Infinity;
+      t += Math.max(Math.min(base, hi) - lim[i], 0) * al[i] / 100;
+    }
+    return t;
+  }
+
+  function addRegionale(inp, imp) {
+    if (inp.regione === "custom") return imp * inp.addReg / 100;
+    var r = REGMAP[inp.regione]; if (!r) return 0;
+    switch (r[4]) {
+      case "fvg": return imp * (imp <= 15000 ? 0.70 : 1.23) / 100;
+      case "vda": return imp <= 15000 ? 0 : imp * 1.23 / 100;
+      case "tn": return imp <= 30000 ? 0 : progressive(imp, r[2], r[3]);
+      case "lazio":
+        if (imp <= 28000) return imp * 1.73 / 100;
+        return Math.max(progressive(imp, r[2], r[3]) - (imp <= 35000 ? 60 : 0), 0);
+      case "bz": return Math.max(progressive(imp, r[2], r[3]) - (imp <= 90000 ? 430.5 : 0), 0);
+      default: return progressive(imp, r[2], r[3]);
+    }
+  }
+
+  function detLavoro(inp, R) {
+    var g = clamp(inp.giorni, 0, 365) / 365, d = 0;
+    if (inp.tipo === "dip") {
+      if (R <= 15000) d = Math.max(1955 * g, inp.contratto === "td" ? 1380 : 690);
+      else if (R <= 28000) d = (1910 + 1190 * t4((28000 - R) / 13000)) * g;
+      else if (R <= 50000) d = 1910 * t4((50000 - R) / 22000) * g;
       if (R > 25000 && R <= 35000) d += 65;
-    } else if (tipo === "pens") {
-      if (R <= 8500) d = 1955;
-      else if (R <= 28000) d = 700 + 1255 * (28000 - R) / 19500;
-      else if (R <= 50000) d = 700 * (50000 - R) / 22000;
+    } else if (inp.tipo === "pens") {
+      if (R <= 8500) d = Math.max(1955 * g, 713);
+      else if (R <= 28000) d = (700 + 1255 * t4((28000 - R) / 19500)) * g;
+      else if (R <= 50000) d = 700 * t4((50000 - R) / 22000) * g;
       if (R > 25000 && R <= 29000) d += 50;
-    } else if (tipo === "aut") {
+    } else if (inp.tipo === "aut") {
       if (R <= 5500) d = 1265;
-      else if (R <= 28000) d = 500 + 765 * (28000 - R) / 22500;
-      else if (R <= 50000) d = 500 * (50000 - R) / 22000;
+      else if (R <= 28000) d = 500 + 765 * t4((28000 - R) / 22500);
+      else if (R <= 50000) d = 500 * t4((50000 - R) / 22000);
       if (R > 11000 && R <= 17000) d += 50;
     }
     return Math.max(d, 0);
   }
 
+  function detConiuge(inp, R) {
+    if (!inp.coniuge) return 0;
+    var m = clamp(Math.round(inp.mesiConiuge), 0, 12) / 12;
+    if (R <= 15000) { var q = t4(R / 15000); return q === 0 ? 0 : (800 - 110 * q) * m; }
+    if (R <= 40000) {
+      var magg = R > 29000 && R <= 29200 ? 10 : R > 29200 && R <= 34700 ? 20 : R > 34700 && R <= 35000 ? 30 : R > 35000 && R <= 35100 ? 20 : R > 35100 && R <= 35200 ? 10 : 0;
+      return 690 * m + magg;
+    }
+    if (R <= 80000) return 690 * t4((80000 - R) / 40000) * m;
+    return 0;
+  }
+  function detFigli(inp, R) {
+    var n = Math.max(Math.floor(inp.figliDetr), 0); if (!n) return 0;
+    var base = 95000 + 15000 * (n - 1), q = t4((base - R) / base);
+    return q > 0 ? 950 * n * Math.min(q, 1) * (inp.percFigli / 100) : 0;
+  }
+  function detAscendenti(inp, R) {
+    var n = Math.max(Math.floor(inp.ascendenti), 0); if (!n || R >= 80000) return 0;
+    return 750 * n * t4((80000 - R) / 80000);
+  }
+
   function calc(inp, year) {
     var P = YEARS[year];
     var Rc = Math.max(inp.reddito, 0);
-    var imp = Math.max(Rc - inp.deducibili, 0);
+    var rn2 = Math.min(Math.max(inp.abitaz, 0), Rc);
+    var prevDed = Math.min(Math.max(inp.prev, 0), P.prevCap);
+    var rn3 = Math.min(Math.max(inp.deducibili, 0) + prevDed, Rc - rn2);
+    var imp = Math.max(Rc - rn2 - rn3, 0);
+    var R = Math.max(Rc - rn2 + Math.max(inp.cedolare, 0), 0); // reddito per detrazioni (RN1 col. 1 − RN2)
+
     var slices = [], lordo = 0;
     for (var i = 0; i < P.lim.length; i++) {
       var lo = P.lim[i], hi = i + 1 < P.lim.length ? P.lim[i + 1] : Infinity;
-      var base = Math.max(Math.min(imp, hi) - lo, 0);
-      slices.push({ lo: lo, hi: hi, al: P.al[i], base: base, tax: base * P.al[i] });
-      lordo += base * P.al[i];
+      var b = Math.max(Math.min(imp, hi) - lo, 0);
+      slices.push({ lo: lo, hi: hi, al: P.al[i], base: b, tax: b * P.al[i] });
+      lordo += b * P.al[i];
     }
-    var giorni = Math.min(Math.max(inp.giorni, 0), 365);
-    var fatt = inp.tipo === "aut" ? 1 : giorni / 365;
-    var dLav = detLavoro(inp.tipo, Rc) * fatt;
+
+    var coniuge = detConiuge(inp, R), figli = detFigli(inp, R), asc = detAscendenti(inp, R);
+    var dLav = detLavoro(inp, R);
 
     var somma = 0, ulteriore = 0;
     if (inp.tipo === "dip") {
       var RL = inp.redditoLav > 0 ? inp.redditoLav : Rc;
-      if (Rc <= 20000) somma = RL * (RL <= 8500 ? 0.071 : RL <= 15000 ? 0.053 : 0.048);
-      else if (Rc <= 32000) ulteriore = 1000;
-      else if (Rc <= 40000) ulteriore = 1000 * (40000 - Rc) / 8000;
+      var g = clamp(inp.giorni, 0, 365) / 365;
+      if (R <= 20000) somma = RL * (RL <= 8500 ? 0.071 : RL <= 15000 ? 0.053 : 0.048);
+      else if (R <= 32000) ulteriore = 1000 * g;
+      else if (R <= 40000) ulteriore = 1000 * t4((40000 - R) / 8000) * g;
     }
+    var rn8 = coniuge + figli + asc + dLav + ulteriore;
 
-    var quota = Math.max(0, Math.min(1, 2 - Rc / 120000));
-    var altreNette = inp.altre * quota;
-    var taglio = P.cut440 && Rc > 200000 ? Math.min(Math.max(inp.altre - inp.esenti440, 0) * quota, 440) : 0;
+    // Oneri (quadro RP)
+    var quota = R <= 120000 ? 1 : R <= 240000 ? t4((240000 - R) / 120000) : 0;
+    var tetto = null;
+    if (R > 75000) {
+      var coeff = inp.disabile ? 1 : [0.5, 0.7, 0.85, 1][clamp(Math.floor(inp.figliTot), 0, 3)];
+      tetto = (R <= 100000 ? 14000 : 8000) * coeff;
+    }
+    var spese19 = Math.max(inp.spese19, 0);
+    var spese19amm = tetto == null ? spese19 : Math.min(spese19, tetto);
+    var detSan = Math.max(inp.sanitarie - 129.11, 0) * 0.19;
+    var detMutuo = Math.min(Math.max(inp.mutuo, 0), 4000) * 0.19;
+    var det19 = spese19amm * 0.19 * quota;
+    var taglio = P.cut440 && Rc > 200000 ? Math.min(det19, 440) : 0;
+    var rn13 = detSan + detMutuo + det19 - taglio;
+    var edilizi = Math.max(inp.edilizi, 0), altre = Math.max(inp.altreDetr, 0);
+    var rn22 = rn8 + rn13 + edilizi + altre;
 
-    var detTot = dLav + ulteriore + inp.nonRid + altreNette - taglio;
-    var netta = Math.max(lordo - detTot, 0);
-    var incapienza = Math.max(detTot - lordo, 0);
-    var addReg = netta > 0 ? imp * inp.addReg / 100 : 0;
-    var addCom = netta > 0 && imp > inp.esenzCom ? imp * inp.addCom / 100 : 0;
+    var netta = Math.max(lordo - rn22, 0);
+    var incapienza = Math.max(rn22 - lordo, 0);
+    var dovuteAdd = netta > 10.33;
+    var addReg = dovuteAdd ? addRegionale(inp, imp) : 0;
+    var addCom = dovuteAdd && imp > inp.esenzCom ? imp * inp.addCom / 100 : 0;
+    var saldo = netta - Math.max(inp.ritenute, 0);
     var carico = netta + addReg + addCom - somma;
 
-    var tetto = null;
-    if (Rc > 75000) {
-      var baseT = Rc <= 100000 ? 14000 : 8000;
-      var coeff = inp.disabile ? 1 : [0.5, 0.7, 0.85, 1][Math.min(Math.max(Math.floor(inp.figli), 0), 3)];
-      tetto = baseT * coeff;
-    }
-    return { Rc: Rc, imp: imp, slices: slices, lordo: lordo, dLav: dLav, ulteriore: ulteriore, somma: somma, nonRid: inp.nonRid,
-      altreNette: altreNette, quota: quota, taglio: taglio, detTot: detTot, netta: netta, incapienza: incapienza,
-      addReg: addReg, addCom: addCom, carico: carico, tetto: tetto };
+    return { Rc: Rc, rn2: rn2, rn3: rn3, prevDed: prevDed, imp: imp, R: R, slices: slices, lordo: lordo,
+      coniuge: coniuge, figli: figli, asc: asc, dLav: dLav, ulteriore: ulteriore, somma: somma, rn8: rn8,
+      quota: quota, tetto: tetto, spese19: spese19, spese19amm: spese19amm, detSan: detSan, detMutuo: detMutuo, det19: det19, taglio: taglio, rn13: rn13,
+      edilizi: edilizi, altre: altre, rn22: rn22, netta: netta, incapienza: incapienza,
+      addReg: addReg, addCom: addCom, accCom: addCom * 0.3, saldo: saldo, carico: carico };
   }
 
   // ---- Stato ----
@@ -367,89 +558,107 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var o = {};
     IDS.forEach(function (k) {
       var el = $(k);
-      if (k === "tipo") o[k] = el.value;
-      else if (k === "disabile") o[k] = el.checked;
+      if (CHECKS[k]) o[k] = el.checked;
+      else if (SELECTS[k]) o[k] = k === "percFigli" ? num(el.value) : el.value;
       else o[k] = num(el.value);
     });
     return o;
   }
   function save() {
     var o = {};
-    IDS.forEach(function (k) { var el = $(k); o[k] = k === "disabile" ? el.checked : el.value; });
+    IDS.forEach(function (k) { var el = $(k); o[k] = CHECKS[k] ? el.checked : el.value; });
     try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
   }
   function load(src) {
     IDS.forEach(function (k) {
       if (!(k in src)) return;
       var el = $(k);
-      if (k === "disabile") el.checked = !!src[k]; else el.value = src[k];
+      if (CHECKS[k]) el.checked = !!src[k]; else el.value = src[k];
     });
   }
   try { var s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) load(s); } catch (e) {}
 
   // ---- Rendering ----
   function delta(v, invert) {
-    if (Math.abs(v) < 0.005) return '<span>' + fm(0) + '</span>';
+    if (Math.abs(v) < 0.005) return "<span>" + fm(0) + "</span>";
     var good = invert ? v > 0 : v < 0;
-    return '<span class="' + (good ? "pos" : "negv") + '">' + (v > 0 ? "+" : "−") + fm(Math.abs(v)).replace("-", "") + "</span>";
+    return '<span class="' + (good ? "pos" : "negv") + '">' + (v > 0 ? "+" : "−") + fm(Math.abs(v)) + "</span>";
+  }
+  function kpi(cls, k, v, s) {
+    return '<div class="kpi ' + cls + '"><span class="k">' + k + '</span><span class="v">' + v + '</span><span class="s">' + s + "</span></div>";
+  }
+  function labelLav(t) {
+    return { dip: "Detrazione lavoro dipendente", pens: "Detrazione redditi di pensione", aut: "Detrazione lavoro autonomo e altri redditi", none: "Detrazione per tipo di reddito" }[t];
   }
 
   function render() {
     var inp = readInputs();
     $("rlWrap").hidden = inp.tipo !== "dip";
+    $("contrattoWrap").style.visibility = inp.tipo === "dip" ? "visible" : "hidden";
+    $("addRegWrap").hidden = inp.regione !== "custom";
     var a = calc(inp, 2025), b = calc(inp, 2026);
     var up = calc(Object.assign({}, inp, { reddito: inp.reddito + 100, redditoLav: inp.redditoLav > 0 ? inp.redditoLav + 100 : 0 }), 2026);
     var marg = (up.carico - b.carico) / 100;
     var risp = a.carico - b.carico;
-    var netto = b.Rc - b.carico;
 
+    var last = inp.ritenute > 0
+      ? kpi("", b.saldo >= 0 ? "IRPEF a debito 2026" : "IRPEF a credito 2026", '<span class="' + (b.saldo >= 0 ? "negv" : "pos") + '">' + fm(Math.abs(b.saldo)) + "</span>", "RN26 − ritenute e acconti")
+      : kpi("", "Reddito netto", fm(b.Rc - b.carico), "dopo IRPEF e addizionali");
     $("summary").innerHTML =
-      kpi("hero", "Carico fiscale 2026", fm(b.carico), "IRPEF + addizionali" + (b.somma ? " − somma esente" : "")) +
+      kpi("hero", "Carico fiscale 2026", fm(b.carico), "IRPEF netta + addizionali" + (b.somma ? " − somma esente" : "")) +
       kpi("", "Risparmio sul 2025", '<span class="' + (risp > 0.005 ? "pos" : risp < -0.005 ? "negv" : "") + '">' + fm(risp) + "</span>", a.carico ? pct.format(risp / a.carico) + " del carico 2025" : "—") +
-      kpi("", "Aliquota media", b.Rc ? pct.format(b.carico / b.Rc) : "—", "marginale " + pct.format(marg)) +
-      kpi("", "Reddito netto", fm(netto), "al netto di IRPEF e addizionali");
+      kpi("", "Aliquota media", b.Rc ? pct.format(b.carico / b.Rc) : "—", "marginale " + pct.format(marg)) + last;
 
-    // Avvisi
     var al = [];
-    if (b.tetto != null) al.push("<b>Tetto oneri detraibili:</b> con reddito oltre 75.000 € le spese che danno diritto a detrazione (escluse sanitarie, mutui ante 2025, bonus edilizi ante 2025 e poche altre) non possono superare <b>" + eur0.format(b.tetto) + " €</b> di spesa complessiva. Verifica che le detrazioni inserite lo rispettino.");
-    if (b.incapienza > 0.5) al.push("<b>Incapienza:</b> " + fm(b.incapienza) + " di detrazioni 2026 non trovano imposta da cui scomputarsi e vanno perse (salvo bonus edilizi cedibili).");
-    if (b.Rc > 200000 && inp.altre > 0) al.push("<b>Oltre 200.000 €:</b> nel 2026 le detrazioni per oneri sono ridotte di " + fm(b.taglio) + ", che neutralizza il beneficio della nuova aliquota del 33%.");
+    if (b.tetto != null) al.push("<b>Tetto agli oneri (art. 16-ter TUIR):</b> con reddito di riferimento oltre 75.000 € le spese detraibili soggette a limite sono ammesse fino a <b>" + eur0.format(b.tetto) + " €</b>." + (b.spese19 > b.tetto ? " Le altre spese al 19% inserite (" + eur0.format(b.spese19) + " €) sono state ridotte a questo importo." : ""));
+    if (b.incapienza > 0.5) al.push("<b>Incapienza:</b> " + fm(b.incapienza) + " di detrazioni 2026 superano l'imposta lorda e vanno perse (salvo regole specifiche, per esempio i bonus edilizi cedibili).");
+    if (b.Rc > 200000 && b.taglio > 0) al.push("<b>Oltre 200.000 €:</b> nel 2026 le detrazioni per le altre spese al 19% sono ridotte di " + fm(b.taglio) + ", che neutralizza il beneficio dell'aliquota del 33%.");
+    if (inp.prev > YEARS[2025].prevCap) al.push("<b>Previdenza complementare:</b> " + fm(inp.prev) + " versati; dedotti " + fm(a.prevDed) + " nel 2025 e " + fm(b.prevDed) + " nel 2026.");
+    if (inp.regione !== "custom") al.push("<b>Addizionale regionale " + REGMAP[inp.regione][1] + ":</b> aliquote dell'anno d'imposta 2025 (tabella del modello Redditi PF 2026), applicate anche al 2026. Controlla le detrazioni regionali per figli e disabilità.");
     $("alerts").innerHTML = al.map(function (t) { return '<div class="notice">' + t + "</div>"; }).join("");
 
-    // Quadro di liquidazione
+    var isDip = inp.tipo === "dip";
     var rows = [
-      ["", "Reddito complessivo", a.Rc, b.Rc, "dim"],
-      ["minus", "Oneri deducibili", a.Rc - a.imp, b.Rc - b.imp, "dim"],
-      ["total", "Reddito imponibile", a.imp, b.imp],
-      ["", "Imposta lorda", a.lordo, b.lordo],
-      ["minus", labelLav(inp.tipo), a.dLav, b.dLav],
-      ["minus", "Ulteriore detrazione cuneo fiscale", a.ulteriore, b.ulteriore, inp.tipo === "dip" ? "" : "skip"],
-      ["minus", "Detrazioni non soggette a riduzione", a.nonRid, b.nonRid],
-      ["minus", "Altre detrazioni (quota spettante " + pct.format(b.quota).replace(",00", "") + ")", a.altreNette, b.altreNette],
-      ["plus", "Taglio detrazioni redditi > 200.000 €", a.taglio, b.taglio, b.taglio ? "" : "skip"],
-      ["total", "IRPEF netta", a.netta, b.netta],
-      ["plus", "Addizionale regionale", a.addReg, b.addReg],
-      ["plus", "Addizionale comunale", a.addCom, b.addCom],
-      ["minus", "Somma esente cuneo fiscale", a.somma, b.somma, inp.tipo === "dip" ? "" : "skip"],
-      ["grand", "Carico fiscale netto", a.carico, b.carico]
+      ["sect", "", "Reddito"],
+      ["", "RN1", "Reddito complessivo", a.Rc, b.Rc, "dim"],
+      ["minus", "RN2", "Deduzione abitazione principale", a.rn2, b.rn2, a.rn2 || b.rn2 ? "" : "skip"],
+      ["minus", "RN3", "Oneri deducibili" + (inp.prev > 0 ? " (incl. previdenza complementare)" : ""), a.rn3, b.rn3],
+      ["total", "RN4", "Reddito imponibile", a.imp, b.imp],
+      ["", "RN5", "Imposta lorda", a.lordo, b.lordo],
+      ["sect", "", "Detrazioni"],
+      ["minus", "RN6", "Coniuge a carico", a.coniuge, b.coniuge, inp.coniuge ? "" : "skip"],
+      ["minus", "RN6", "Figli a carico", a.figli, b.figli, inp.figliDetr > 0 ? "" : "skip"],
+      ["minus", "RN6", "Ascendenti conviventi", a.asc, b.asc, inp.ascendenti > 0 ? "" : "skip"],
+      ["minus", "RN7", labelLav(inp.tipo), a.dLav, b.dLav],
+      ["minus", "RN7", "Ulteriore detrazione cuneo fiscale (col. 5)", a.ulteriore, b.ulteriore, isDip ? "" : "skip"],
+      ["minus", "RN13", "Spese sanitarie (19% oltre 129,11 €)", a.detSan, b.detSan, inp.sanitarie > 0 ? "" : "skip"],
+      ["minus", "RN13", "Interessi mutuo abitazione principale", a.detMutuo, b.detMutuo, inp.mutuo > 0 ? "" : "skip"],
+      ["minus", "RN13", "Altre spese al 19%" + (b.quota < 1 ? " (quota spettante " + pct.format(b.quota) + ")" : ""), a.det19, b.det19, inp.spese19 > 0 ? "" : "skip"],
+      ["plus", "RN13", "Taglio detrazioni redditi oltre 200.000 €", a.taglio, b.taglio, b.taglio ? "" : "skip"],
+      ["minus", "RN14", "Bonus edilizi (rata annua)", a.edilizi, b.edilizi, inp.edilizi > 0 ? "" : "skip"],
+      ["minus", "RN17", "Altre detrazioni", a.altre, b.altre, inp.altreDetr > 0 ? "" : "skip"],
+      ["total", "RN22", "Totale detrazioni", a.rn22, b.rn22],
+      ["total", "RN26", "Imposta netta", a.netta, b.netta],
+      ["minus", "RN33", "Ritenute e acconti", inp.ritenute, inp.ritenute, inp.ritenute > 0 ? "" : "skip"],
+      ["total", "RN34", b.saldo >= 0 ? "IRPEF a debito" : "IRPEF a credito", a.saldo, b.saldo, inp.ritenute > 0 ? "" : "skip"],
+      ["sect", "", "Addizionali e carico complessivo"],
+      ["plus", "RV2", "Addizionale regionale", a.addReg, b.addReg],
+      ["plus", "RV10", "Addizionale comunale", a.addCom, b.addCom],
+      ["", "RV17", "Acconto addizionale comunale anno successivo (30%)", a.accCom, b.accCom, "dim" + (b.accCom > 0 ? "" : " skip")],
+      ["minus", "", "Somma esente cuneo fiscale (in busta paga)", a.somma, b.somma, isDip && (a.somma || b.somma) ? "" : "skip"],
+      ["grand", "", "Carico fiscale netto", a.carico, b.carico]
     ];
-    var html = '<thead><tr><th>Voce</th><th>2025</th><th class="y26">2026</th><th>Δ</th></tr></thead><tbody>';
+    var html = '<thead><tr><th>Rigo e voce</th><th>2025</th><th class="y26">2026</th><th>Δ</th></tr></thead><tbody>';
     rows.forEach(function (r) {
-      if (r[4] === "skip") return;
-      html += '<tr class="' + r[0] + " " + (r[4] || "") + '"><td>' + r[1] + "</td><td>" + fm(r[2]) + "</td><td>" + fm(r[3]) + "</td><td>" + delta(r[3] - r[2], r[0] === "minus") + "</td></tr>";
+      if (r[0] === "sect") { html += '<tr class="sect"><td colspan="4">' + r[2] + "</td></tr>"; return; }
+      if (r[5] && r[5].indexOf("skip") >= 0) return;
+      html += '<tr class="' + r[0] + " " + (r[5] || "") + '"><td><span class="code">' + r[1] + '</span><span class="lbl">' + r[2] + "</span></td><td>" + fm(r[3]) + "</td><td>" + fm(r[4]) + "</td><td>" + delta(r[4] - r[3], r[0] === "minus") + "</td></tr>";
     });
     $("liq").innerHTML = html + "</tbody>";
 
     renderBrackets(a, b);
     renderChart(inp, b.Rc);
     save();
-  }
-
-  function labelLav(t) {
-    return { dip: "Detrazione lavoro dipendente", pens: "Detrazione redditi di pensione", aut: "Detrazione lavoro autonomo / altri redditi", none: "Detrazione per tipo di reddito" }[t];
-  }
-  function kpi(cls, k, v, s) {
-    return '<div class="kpi ' + cls + '"><span class="k">' + k + '</span><span class="v">' + v + '</span><span class="s">' + s + "</span></div>";
   }
 
   var SEGC = ["color-mix(in srgb, var(--accent) 55%, var(--sheet))", "var(--accent)", "color-mix(in srgb, var(--accent) 60%, var(--ink))"];
@@ -459,7 +668,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       var segs = r.slices.map(function (s, i) {
         var w = s.base / tot * 100;
         var lab = w > 14 ? (s.al * 100).toFixed(0) + "% · " + eur0.format(s.tax) + " €" : w > 6 ? (s.al * 100).toFixed(0) + "%" : "";
-        return '<div class="seg" style="flex:0 0 ' + w + '%;background:' + SEGC[i] + '" title="' + y + " · " + (s.al * 100).toFixed(0) + "%: " + eur0.format(s.base) + " € → " + eur0.format(s.tax) + ' €">' + lab + "</div>";
+        return '<div class="seg" style="flex:0 0 ' + w + "%;background:" + SEGC[i] + '" title="' + y + " · " + (s.al * 100).toFixed(0) + "%: " + eur0.format(s.base) + " € → " + eur0.format(s.tax) + ' €">' + lab + "</div>";
       }).join("");
       return '<div class="brow ' + (y === 2026 ? "y26" : "") + '"><span class="yl">' + y + '</span><div class="bar" role="img" aria-label="Ripartizione per scaglioni ' + y + '">' + segs + "</div></div>";
     }
@@ -470,7 +679,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       var sa = a.slices[i];
       h += "<tr><td>" + (i + 1) + "° · " + eur0.format(s.lo) + (s.hi === Infinity ? " € e oltre" : "–" + eur0.format(s.hi) + " €") + "</td><td>" + fm(s.base) + "</td><td>" + (sa.al * 100).toFixed(0) + "%</td><td>" + fm(sa.tax) + "</td><td>" + (s.al * 100).toFixed(0) + "%</td><td>" + fm(s.tax) + "</td></tr>";
     });
-    h += '<tr class="total"><td>Imposta lorda</td><td>' + fm(b.imp) + "</td><td></td><td>" + fm(a.lordo) + "</td><td></td><td>" + fm(b.lordo) + "</td></tr>";
+    h += '<tr class="total"><td>Imposta lorda (RN5)</td><td>' + fm(b.imp) + "</td><td></td><td>" + fm(a.lordo) + "</td><td></td><td>" + fm(b.lordo) + "</td></tr>";
     $("btable").innerHTML = h + "</tbody>";
   }
 
@@ -487,11 +696,11 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var ymin = Math.min(0, Math.floor(Math.min.apply(null, pts.map(function (p) { return p[1]; })) / 100) * 100);
     var sx = function (v) { return L + (v / xmax) * (W - L - R); };
     var sy = function (v) { return T + (1 - (v - ymin) / (ymax - ymin)) * (H - T - B); };
-    var g = "";
-    var ystep = ymax - ymin > 600 ? 200 : 100;
-    for (var yv = ymin; yv <= ymax; yv += ystep) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + sy(yv) + '" y2="' + sy(yv) + '"/>';
-    var ax = "";
-    for (var yv2 = ymin; yv2 <= ymax; yv2 += ystep) ax += '<text x="' + (L - 8) + '" y="' + (sy(yv2) + 4) + '" text-anchor="end">' + eur0.format(yv2) + "</text>";
+    var ystep = ymax - ymin > 600 ? 200 : 100, g = "", ax = "";
+    for (var yv = ymin; yv <= ymax; yv += ystep) {
+      g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + sy(yv) + '" y2="' + sy(yv) + '"/>';
+      ax += '<text x="' + (L - 8) + '" y="' + (sy(yv) + 4) + '" text-anchor="end">' + eur0.format(yv) + "</text>";
+    }
     var xstep = xmax > 300000 ? 100000 : 50000;
     for (var xv = 0; xv <= xmax; xv += xstep) ax += '<text x="' + sx(xv) + '" y="' + (H - 10) + '" text-anchor="middle">' + (xv / 1000) + "k</text>";
     var line = pts.map(function (p, i) { return (i ? "L" : "M") + sx(p[0]).toFixed(1) + "," + sy(p[1]).toFixed(1); }).join("");
@@ -500,7 +709,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var dc = calc(o2, 2025).netta - calc(o2, 2026).netta;
     var cx = sx(Math.min(cur, xmax)), cy = sy(dc);
     var anchor = cx > W * 0.7 ? "end" : "start", dx = anchor === "end" ? -10 : 10;
-    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Risparmio IRPEF 2026 rispetto al 2025 per livello di reddito">' +
+    $("chart").innerHTML = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Risparmio IRPEF 2026 rispetto al 2025 per livello di reddito">' +
       '<g class="grid">' + g + "</g>" +
       '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + sy(440) + '" y2="' + sy(440) + '" stroke="var(--old)" stroke-dasharray="4 4"/>' +
       '<path d="' + area + '" fill="var(--accent)" fill-opacity="0.12"/>' +
@@ -509,10 +718,8 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="var(--sheet)" stroke="var(--accent)" stroke-width="2.5"/>' +
       '<text x="' + (cx + dx) + '" y="' + Math.max(cy - 10, T + 10) + '" text-anchor="' + anchor + '" style="fill:var(--ink);font:600 12px var(--font-num)">' + eur0.format(dc) + " € a " + eur0.format(cur) + " €</text>" +
       '<g class="axis">' + ax + "</g></svg>";
-    $("chart").innerHTML = svg;
   }
 
-  // Scorciatoie di reddito
   [20000, 35000, 50000, 80000, 150000, 250000].forEach(function (v) {
     var bt = document.createElement("button");
     bt.type = "button"; bt.className = "chip"; bt.textContent = eur0.format(v);
