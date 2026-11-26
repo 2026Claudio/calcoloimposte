@@ -1,0 +1,529 @@
+<title>IRPEF 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: banda d'intestazione, poi due colonne — modulo dati a sinistra (sticky), quadro di liquidazione 2025/2026 a destra; una colonna sotto 900px */
+:root {
+  --paper: #f3f5f2;
+  --sheet: #ffffff;
+  --ink: #15201c;
+  --muted: #5c6a64;
+  --line: #d8dfdb;
+  --accent: #0d6b5a;
+  --accent-soft: #dcefe9;
+  --old: #8a8f9c;
+  --warn: #9a5b00;
+  --warn-soft: #fbf0dc;
+  --neg: #a3332b;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e1412; --sheet: #151d1a; --ink: #e3ebe7; --muted: #95a49d; --line: #2a3632;
+    --accent: #4cc2a5; --accent-soft: #173a31; --old: #8d93a3; --warn: #e2a64b; --warn-soft: #3a2b12; --neg: #ef7d72;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0e1412; --sheet: #151d1a; --ink: #e3ebe7; --muted: #95a49d; --line: #2a3632;
+  --accent: #4cc2a5; --accent-soft: #173a31; --old: #8d93a3; --warn: #e2a64b; --warn-soft: #3a2b12; --neg: #ef7d72;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header.top { border-bottom: 1px solid var(--line); background: var(--sheet); }
+header.top .wrap { padding-block: 22px 18px; display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; }
+.brand { display: flex; flex-direction: column; gap: 2px; }
+.eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(26px, 4vw, 36px); line-height: 1.05; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+.rates { display: flex; gap: 6px; flex-wrap: wrap; font-family: var(--font-num); font-size: 12.5px; }
+.rate { border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; white-space: nowrap; }
+.rate b { font-weight: 600; }
+.rate.changed { border-color: var(--accent); background: var(--accent-soft); }
+.rate s { color: var(--old); margin-right: 4px; }
+
+main.wrap { padding-block: 24px 48px; display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { main.wrap { grid-template-columns: minmax(0, 1fr); } }
+
+/* Modulo */
+form.panel { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+@media (max-width: 900px) { form.panel { position: static; } }
+fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+legend { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 10px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 13px; font-weight: 500; }
+.field small { color: var(--muted); font-size: 12px; line-height: 1.35; }
+.inp { position: relative; }
+.inp input, select { width: 100%; font: 500 15px var(--font-num); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; font-variant-numeric: tabular-nums; }
+.inp input { padding-right: 30px; text-align: right; }
+.inp .unit { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font: 13px var(--font-num); pointer-events: none; }
+select { font-family: var(--font-body); }
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12.5px var(--font-num); border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.check { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+.check input { accent-color: var(--accent); width: 16px; height: 16px; }
+.reset { align-self: flex-start; font: 500 13px var(--font-body); background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0; }
+.hidden-dip[hidden] { display: none !important; }
+
+/* Risultati */
+.results { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+@media (max-width: 640px) { .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kpi { background: var(--sheet); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.kpi .k { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.kpi .v { font: 600 clamp(17px, 1.9vw, 21px) var(--font-num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.kpi .s { font-size: 12px; color: var(--muted); }
+.kpi.hero .v { color: var(--accent); }
+.pos { color: var(--accent); }
+.negv { color: var(--neg); }
+
+section.card { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 18px; min-width: 0; }
+section.card h2 { font-family: var(--font-display); font-weight: 700; font-size: 17px; margin: 0 0 4px; text-wrap: balance; }
+section.card p.sub { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
+.tablewrap { overflow-x: auto; }
+table.liq { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 520px; }
+table.liq th, table.liq td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+table.liq th:first-child, table.liq td:first-child { text-align: left; white-space: normal; }
+table.liq thead th { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 2px solid var(--ink); }
+table.liq thead th.y26 { color: var(--accent); }
+table.liq td { font-family: var(--font-num); font-size: 13.5px; }
+table.liq td:first-child { font-family: var(--font-body); font-size: 14px; }
+table.liq td .code { font: 11px var(--font-num); color: var(--muted); margin-right: 6px; }
+table.liq tr.minus td:first-child::before { content: "− "; color: var(--muted); }
+table.liq tr.plus td:first-child::before { content: "+ "; color: var(--muted); }
+table.liq tr.total td { font-weight: 600; border-bottom: 2px solid var(--ink); }
+table.liq tr.grand td { font-weight: 600; font-size: 15px; background: var(--accent-soft); border-bottom: 0; }
+table.liq tr.dim td { color: var(--muted); }
+
+.brackets { display: flex; flex-direction: column; gap: 10px; }
+.brow { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; align-items: center; }
+.brow .yl { font: 600 13px var(--font-num); color: var(--muted); }
+.brow.y26 .yl { color: var(--accent); }
+.bar { display: flex; height: 30px; border-radius: 4px; overflow: hidden; background: var(--paper); border: 1px solid var(--line); }
+.seg { display: flex; align-items: center; justify-content: center; font: 500 11.5px var(--font-num); color: var(--sheet); white-space: nowrap; overflow: hidden; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.bdetail { margin-top: 12px; }
+.bdetail table { min-width: 680px; }
+.bdetail td:first-child { white-space: nowrap; }
+
+.chartbox svg { width: 100%; height: auto; display: block; }
+.chartbox .axis text { fill: var(--muted); font: 11px var(--font-num); }
+.chartbox .grid line { stroke: var(--line); }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.chart-legend i { display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: 3px; border-radius: 2px; }
+
+.notice { border: 1px solid var(--warn); background: var(--warn-soft); color: var(--ink); border-radius: 6px; padding: 10px 12px; font-size: 13px; }
+.notice b { color: var(--warn); }
+.notes { font-size: 13px; color: var(--muted); }
+.notes ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 80ch; }
+.notes b { color: var(--ink); font-weight: 600; }
+footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .seg { transition: flex-basis .25s ease; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <span class="eyebrow">Persone fisiche · confronto 2025 / 2026</span>
+      <h1>Calcolo <span>IRPEF 2026</span></h1>
+    </div>
+    <div class="rates" aria-label="Aliquote 2026">
+      <span class="rate">fino a 28.000 € <b>23%</b></span>
+      <span class="rate changed">28.000–50.000 € <s>35%</s><b>33%</b></span>
+      <span class="rate">oltre 50.000 € <b>43%</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <form class="panel" id="f" autocomplete="off">
+    <fieldset>
+      <legend>Reddito</legend>
+      <div class="field">
+        <label for="reddito">Reddito complessivo</label>
+        <div class="inp"><input id="reddito" inputmode="decimal" value="45000"><span class="unit">€</span></div>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="field">
+        <label for="deducibili">Oneri deducibili</label>
+        <div class="inp"><input id="deducibili" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Contributi, previdenza complementare ecc. Riducono l'imponibile.</small>
+      </div>
+      <div class="field">
+        <label for="tipo">Tipo di reddito prevalente</label>
+        <select id="tipo">
+          <option value="dip">Lavoro dipendente</option>
+          <option value="pens">Pensione</option>
+          <option value="aut">Lavoro autonomo / altri redditi</option>
+          <option value="none">Nessuna detrazione per tipo di reddito</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="giorni">Giorni nell'anno</label>
+          <div class="inp"><input id="giorni" inputmode="numeric" value="365"><span class="unit">gg</span></div>
+        </div>
+        <div class="field hidden-dip" id="rlWrap">
+          <label for="redditoLav">di cui lav. dip.</label>
+          <div class="inp"><input id="redditoLav" inputmode="decimal" placeholder="= complessivo"><span class="unit">€</span></div>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Detrazioni per oneri</legend>
+      <div class="field">
+        <label for="nonRid">Detrazioni non soggette a riduzione</label>
+        <div class="inp"><input id="nonRid" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Es. interessi mutuo abitazione principale, spese sanitarie, bonus edilizi.</small>
+      </div>
+      <div class="field">
+        <label for="altre">Altre detrazioni (19% ecc.)</label>
+        <div class="inp"><input id="altre" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Ridotte proporzionalmente tra 120.000 e 240.000 € di reddito.</small>
+      </div>
+      <div class="field">
+        <label for="esenti440">di cui escluse dal taglio di 440 €</label>
+        <div class="inp"><input id="esenti440" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Rileva solo nel 2026, per redditi oltre 200.000 €.</small>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="figli">Figli a carico</label>
+          <div class="inp"><input id="figli" inputmode="numeric" value="0"><span class="unit">n.</span></div>
+        </div>
+        <label class="check" style="align-self:end;padding-bottom:10px"><input type="checkbox" id="disabile"> con disabilità</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Addizionali</legend>
+      <div class="row2">
+        <div class="field">
+          <label for="addReg">Regionale</label>
+          <div class="inp"><input id="addReg" inputmode="decimal" value="1,23"><span class="unit">%</span></div>
+        </div>
+        <div class="field">
+          <label for="addCom">Comunale</label>
+          <div class="inp"><input id="addCom" inputmode="decimal" value="0,8"><span class="unit">%</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="esenzCom">Soglia di esenzione comunale</label>
+        <div class="inp"><input id="esenzCom" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Aliquote medie: verificare la delibera della propria Regione e del proprio Comune.</small>
+      </div>
+    </fieldset>
+    <button type="button" class="reset" id="reset">Ripristina l'esempio</button>
+  </form>
+
+  <div class="results">
+    <div class="summary" id="summary"></div>
+    <div id="alerts"></div>
+
+    <section class="card">
+      <h2>Quadro di liquidazione</h2>
+      <p class="sub">Stesso reddito, regole 2025 e regole 2026 a confronto.</p>
+      <div class="tablewrap"><table class="liq" id="liq"></table></div>
+    </section>
+
+    <section class="card">
+      <h2>Imposta lorda per scaglione</h2>
+      <p class="sub">Quanto reddito cade in ciascuno scaglione e quanta imposta genera.</p>
+      <div class="brackets" id="brackets"></div>
+      <div class="legend" id="blegend"></div>
+      <div class="tablewrap bdetail"><table class="liq" id="btable"></table></div>
+    </section>
+
+    <section class="card">
+      <h2>Risparmio 2026 al variare del reddito</h2>
+      <p class="sub">Differenza di IRPEF netta tra regole 2025 e 2026, con le altre voci del modulo invariate. Il punto indica il reddito inserito.</p>
+      <div class="chartbox" id="chart"></div>
+      <div class="chart-legend"><span><i style="background:var(--accent)"></i>Risparmio IRPEF netta (€)</span><span><i style="background:var(--old)"></i>Massimo teorico dallo scaglione: 440 €</span></div>
+    </section>
+
+    <section class="card notes">
+      <h2>Regole applicate</h2>
+      <ol>
+        <li><b>Scaglioni:</b> 23% fino a 28.000 €, 33% (35% nel 2025) da 28.000 a 50.000 €, 43% oltre 50.000 € (art. 11 TUIR, Legge di Bilancio 2026).</li>
+        <li><b>Detrazioni lavoro dipendente</b> (art. 13 TUIR): 1.955 € fino a 15.000 €; 1.910 + 1.190 × (28.000 − R)/13.000 fino a 28.000 €; 1.910 × (50.000 − R)/22.000 fino a 50.000 €; +65 € tra 25.000 e 35.000 €. Rapportate ai giorni. Il minimo di 690/1.380 € per redditi fino a 15.000 € non è applicato.</li>
+        <li><b>Detrazioni pensione:</b> 1.955 € fino a 8.500 €; 700 + 1.255 × (28.000 − R)/19.500 fino a 28.000 €; 700 × (50.000 − R)/22.000 fino a 50.000 €; +50 € tra 25.000 e 29.000 €.</li>
+        <li><b>Detrazioni lavoro autonomo e altri redditi:</b> 1.265 € fino a 5.500 €; 500 + 765 × (28.000 − R)/22.500 fino a 28.000 €; 500 × (50.000 − R)/22.000 fino a 50.000 €; +50 € tra 11.000 e 17.000 €.</li>
+        <li><b>Taglio del cuneo</b> (L. 207/2024): somma esente del 7,1% / 5,3% / 4,8% del reddito di lavoro dipendente se il reddito complessivo non supera 20.000 €; ulteriore detrazione di 1.000 € tra 20.000 e 32.000 €, decrescente fino a zero a 40.000 €. La somma esente non riduce l'IRPEF: è indicata a parte e sottratta dal carico netto.</li>
+        <li><b>Detrazioni per oneri:</b> spettano per intero fino a 120.000 € e si riducono a zero a 240.000 €. Oltre 75.000 € vale il tetto agli oneri detraibili (14.000 € fino a 100.000 €, 8.000 € oltre) moltiplicato per 0,50 / 0,70 / 0,85 / 1 secondo i figli a carico.</li>
+        <li><b>Neutralizzazione oltre 200.000 €</b> (solo 2026): le detrazioni per oneri sono ridotte di 440 €, pari al beneficio massimo del nuovo secondo scaglione.</li>
+        <li><b>Addizionali:</b> dovute solo se l'IRPEF netta è positiva, calcolate sull'imponibile con aliquota unica. Le Regioni e i Comuni che usano aliquote per scaglioni richiedono un calcolo dedicato.</li>
+      </ol>
+    </section>
+  </div>
+</main>
+<footer class="wrap">Simulazione indicativa: non sostituisce la dichiarazione dei redditi né il calcolo del sostituto d'imposta. Non considera detrazioni per carichi di famiglia, crediti d'imposta e redditi a tassazione separata o sostitutiva.</footer>
+
+<script>
+(function () {
+  "use strict";
+  var YEARS = {
+    2025: { lim: [0, 28000, 50000], al: [0.23, 0.35, 0.43], cut440: false },
+    2026: { lim: [0, 28000, 50000], al: [0.23, 0.33, 0.43], cut440: true }
+  };
+  var DEFAULTS = { reddito: "45000", deducibili: "0", tipo: "dip", giorni: "365", redditoLav: "", nonRid: "0", altre: "0", esenti440: "0", figli: "0", disabile: false, addReg: "1,23", addCom: "0,8", esenzCom: "0" };
+  var IDS = Object.keys(DEFAULTS);
+  var KEY = "irpef2026-inputs";
+  var $ = function (id) { return document.getElementById(id); };
+
+  var eur = new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var eur0 = new Intl.NumberFormat("it-IT", { maximumFractionDigits: 0 });
+  var pct = new Intl.NumberFormat("it-IT", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function fm(v) { return eur.format(Math.abs(v) < 0.005 ? 0 : v); }
+
+  function num(s) {
+    if (s == null) return 0;
+    s = String(s).trim().replace(/\s|€|%/g, "");
+    if (s === "") return 0;
+    if (s.indexOf(",") >= 0) s = s.replace(/\./g, "").replace(",", ".");
+    else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, "");
+    var n = parseFloat(s);
+    return isFinite(n) ? n : 0;
+  }
+
+  // ---- Motore di calcolo ----
+  function detLavoro(tipo, R) {
+    var d = 0;
+    if (tipo === "dip") {
+      if (R <= 15000) d = 1955;
+      else if (R <= 28000) d = 1910 + 1190 * (28000 - R) / 13000;
+      else if (R <= 50000) d = 1910 * (50000 - R) / 22000;
+      if (R > 25000 && R <= 35000) d += 65;
+    } else if (tipo === "pens") {
+      if (R <= 8500) d = 1955;
+      else if (R <= 28000) d = 700 + 1255 * (28000 - R) / 19500;
+      else if (R <= 50000) d = 700 * (50000 - R) / 22000;
+      if (R > 25000 && R <= 29000) d += 50;
+    } else if (tipo === "aut") {
+      if (R <= 5500) d = 1265;
+      else if (R <= 28000) d = 500 + 765 * (28000 - R) / 22500;
+      else if (R <= 50000) d = 500 * (50000 - R) / 22000;
+      if (R > 11000 && R <= 17000) d += 50;
+    }
+    return Math.max(d, 0);
+  }
+
+  function calc(inp, year) {
+    var P = YEARS[year];
+    var Rc = Math.max(inp.reddito, 0);
+    var imp = Math.max(Rc - inp.deducibili, 0);
+    var slices = [], lordo = 0;
+    for (var i = 0; i < P.lim.length; i++) {
+      var lo = P.lim[i], hi = i + 1 < P.lim.length ? P.lim[i + 1] : Infinity;
+      var base = Math.max(Math.min(imp, hi) - lo, 0);
+      slices.push({ lo: lo, hi: hi, al: P.al[i], base: base, tax: base * P.al[i] });
+      lordo += base * P.al[i];
+    }
+    var giorni = Math.min(Math.max(inp.giorni, 0), 365);
+    var fatt = inp.tipo === "aut" ? 1 : giorni / 365;
+    var dLav = detLavoro(inp.tipo, Rc) * fatt;
+
+    var somma = 0, ulteriore = 0;
+    if (inp.tipo === "dip") {
+      var RL = inp.redditoLav > 0 ? inp.redditoLav : Rc;
+      if (Rc <= 20000) somma = RL * (RL <= 8500 ? 0.071 : RL <= 15000 ? 0.053 : 0.048);
+      else if (Rc <= 32000) ulteriore = 1000;
+      else if (Rc <= 40000) ulteriore = 1000 * (40000 - Rc) / 8000;
+    }
+
+    var quota = Math.max(0, Math.min(1, 2 - Rc / 120000));
+    var altreNette = inp.altre * quota;
+    var taglio = P.cut440 && Rc > 200000 ? Math.min(Math.max(inp.altre - inp.esenti440, 0) * quota, 440) : 0;
+
+    var detTot = dLav + ulteriore + inp.nonRid + altreNette - taglio;
+    var netta = Math.max(lordo - detTot, 0);
+    var incapienza = Math.max(detTot - lordo, 0);
+    var addReg = netta > 0 ? imp * inp.addReg / 100 : 0;
+    var addCom = netta > 0 && imp > inp.esenzCom ? imp * inp.addCom / 100 : 0;
+    var carico = netta + addReg + addCom - somma;
+
+    var tetto = null;
+    if (Rc > 75000) {
+      var baseT = Rc <= 100000 ? 14000 : 8000;
+      var coeff = inp.disabile ? 1 : [0.5, 0.7, 0.85, 1][Math.min(Math.max(Math.floor(inp.figli), 0), 3)];
+      tetto = baseT * coeff;
+    }
+    return { Rc: Rc, imp: imp, slices: slices, lordo: lordo, dLav: dLav, ulteriore: ulteriore, somma: somma, nonRid: inp.nonRid,
+      altreNette: altreNette, quota: quota, taglio: taglio, detTot: detTot, netta: netta, incapienza: incapienza,
+      addReg: addReg, addCom: addCom, carico: carico, tetto: tetto };
+  }
+
+  // ---- Stato ----
+  function readInputs() {
+    var o = {};
+    IDS.forEach(function (k) {
+      var el = $(k);
+      if (k === "tipo") o[k] = el.value;
+      else if (k === "disabile") o[k] = el.checked;
+      else o[k] = num(el.value);
+    });
+    return o;
+  }
+  function save() {
+    var o = {};
+    IDS.forEach(function (k) { var el = $(k); o[k] = k === "disabile" ? el.checked : el.value; });
+    try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {}
+  }
+  function load(src) {
+    IDS.forEach(function (k) {
+      if (!(k in src)) return;
+      var el = $(k);
+      if (k === "disabile") el.checked = !!src[k]; else el.value = src[k];
+    });
+  }
+  try { var s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s) load(s); } catch (e) {}
+
+  // ---- Rendering ----
+  function delta(v, invert) {
+    if (Math.abs(v) < 0.005) return '<span>' + fm(0) + '</span>';
+    var good = invert ? v > 0 : v < 0;
+    return '<span class="' + (good ? "pos" : "negv") + '">' + (v > 0 ? "+" : "−") + fm(Math.abs(v)).replace("-", "") + "</span>";
+  }
+
+  function render() {
+    var inp = readInputs();
+    $("rlWrap").hidden = inp.tipo !== "dip";
+    var a = calc(inp, 2025), b = calc(inp, 2026);
+    var up = calc(Object.assign({}, inp, { reddito: inp.reddito + 100, redditoLav: inp.redditoLav > 0 ? inp.redditoLav + 100 : 0 }), 2026);
+    var marg = (up.carico - b.carico) / 100;
+    var risp = a.carico - b.carico;
+    var netto = b.Rc - b.carico;
+
+    $("summary").innerHTML =
+      kpi("hero", "Carico fiscale 2026", fm(b.carico), "IRPEF + addizionali" + (b.somma ? " − somma esente" : "")) +
+      kpi("", "Risparmio sul 2025", '<span class="' + (risp > 0.005 ? "pos" : risp < -0.005 ? "negv" : "") + '">' + fm(risp) + "</span>", a.carico ? pct.format(risp / a.carico) + " del carico 2025" : "—") +
+      kpi("", "Aliquota media", b.Rc ? pct.format(b.carico / b.Rc) : "—", "marginale " + pct.format(marg)) +
+      kpi("", "Reddito netto", fm(netto), "al netto di IRPEF e addizionali");
+
+    // Avvisi
+    var al = [];
+    if (b.tetto != null) al.push("<b>Tetto oneri detraibili:</b> con reddito oltre 75.000 € le spese che danno diritto a detrazione (escluse sanitarie, mutui ante 2025, bonus edilizi ante 2025 e poche altre) non possono superare <b>" + eur0.format(b.tetto) + " €</b> di spesa complessiva. Verifica che le detrazioni inserite lo rispettino.");
+    if (b.incapienza > 0.5) al.push("<b>Incapienza:</b> " + fm(b.incapienza) + " di detrazioni 2026 non trovano imposta da cui scomputarsi e vanno perse (salvo bonus edilizi cedibili).");
+    if (b.Rc > 200000 && inp.altre > 0) al.push("<b>Oltre 200.000 €:</b> nel 2026 le detrazioni per oneri sono ridotte di " + fm(b.taglio) + ", che neutralizza il beneficio della nuova aliquota del 33%.");
+    $("alerts").innerHTML = al.map(function (t) { return '<div class="notice">' + t + "</div>"; }).join("");
+
+    // Quadro di liquidazione
+    var rows = [
+      ["", "Reddito complessivo", a.Rc, b.Rc, "dim"],
+      ["minus", "Oneri deducibili", a.Rc - a.imp, b.Rc - b.imp, "dim"],
+      ["total", "Reddito imponibile", a.imp, b.imp],
+      ["", "Imposta lorda", a.lordo, b.lordo],
+      ["minus", labelLav(inp.tipo), a.dLav, b.dLav],
+      ["minus", "Ulteriore detrazione cuneo fiscale", a.ulteriore, b.ulteriore, inp.tipo === "dip" ? "" : "skip"],
+      ["minus", "Detrazioni non soggette a riduzione", a.nonRid, b.nonRid],
+      ["minus", "Altre detrazioni (quota spettante " + pct.format(b.quota).replace(",00", "") + ")", a.altreNette, b.altreNette],
+      ["plus", "Taglio detrazioni redditi > 200.000 €", a.taglio, b.taglio, b.taglio ? "" : "skip"],
+      ["total", "IRPEF netta", a.netta, b.netta],
+      ["plus", "Addizionale regionale", a.addReg, b.addReg],
+      ["plus", "Addizionale comunale", a.addCom, b.addCom],
+      ["minus", "Somma esente cuneo fiscale", a.somma, b.somma, inp.tipo === "dip" ? "" : "skip"],
+      ["grand", "Carico fiscale netto", a.carico, b.carico]
+    ];
+    var html = '<thead><tr><th>Voce</th><th>2025</th><th class="y26">2026</th><th>Δ</th></tr></thead><tbody>';
+    rows.forEach(function (r) {
+      if (r[4] === "skip") return;
+      html += '<tr class="' + r[0] + " " + (r[4] || "") + '"><td>' + r[1] + "</td><td>" + fm(r[2]) + "</td><td>" + fm(r[3]) + "</td><td>" + delta(r[3] - r[2], r[0] === "minus") + "</td></tr>";
+    });
+    $("liq").innerHTML = html + "</tbody>";
+
+    renderBrackets(a, b);
+    renderChart(inp, b.Rc);
+    save();
+  }
+
+  function labelLav(t) {
+    return { dip: "Detrazione lavoro dipendente", pens: "Detrazione redditi di pensione", aut: "Detrazione lavoro autonomo / altri redditi", none: "Detrazione per tipo di reddito" }[t];
+  }
+  function kpi(cls, k, v, s) {
+    return '<div class="kpi ' + cls + '"><span class="k">' + k + '</span><span class="v">' + v + '</span><span class="s">' + s + "</span></div>";
+  }
+
+  var SEGC = ["color-mix(in srgb, var(--accent) 55%, var(--sheet))", "var(--accent)", "color-mix(in srgb, var(--accent) 60%, var(--ink))"];
+  function renderBrackets(a, b) {
+    var tot = Math.max(b.imp, 1);
+    function bar(r, y) {
+      var segs = r.slices.map(function (s, i) {
+        var w = s.base / tot * 100;
+        var lab = w > 14 ? (s.al * 100).toFixed(0) + "% · " + eur0.format(s.tax) + " €" : w > 6 ? (s.al * 100).toFixed(0) + "%" : "";
+        return '<div class="seg" style="flex:0 0 ' + w + '%;background:' + SEGC[i] + '" title="' + y + " · " + (s.al * 100).toFixed(0) + "%: " + eur0.format(s.base) + " € → " + eur0.format(s.tax) + ' €">' + lab + "</div>";
+      }).join("");
+      return '<div class="brow ' + (y === 2026 ? "y26" : "") + '"><span class="yl">' + y + '</span><div class="bar" role="img" aria-label="Ripartizione per scaglioni ' + y + '">' + segs + "</div></div>";
+    }
+    $("brackets").innerHTML = bar(a, 2025) + bar(b, 2026);
+    $("blegend").innerHTML = ["1° scaglione · 0–28.000 €", "2° scaglione · 28.000–50.000 €", "3° scaglione · oltre 50.000 €"].map(function (t, i) { return '<span><i style="background:' + SEGC[i] + '"></i>' + t + "</span>"; }).join("");
+    var h = '<thead><tr><th>Scaglione</th><th>Reddito nello scaglione</th><th>Aliquota 2025</th><th>Imposta 2025</th><th class="y26">Aliquota 2026</th><th class="y26">Imposta 2026</th></tr></thead><tbody>';
+    b.slices.forEach(function (s, i) {
+      var sa = a.slices[i];
+      h += "<tr><td>" + (i + 1) + "° · " + eur0.format(s.lo) + (s.hi === Infinity ? " € e oltre" : "–" + eur0.format(s.hi) + " €") + "</td><td>" + fm(s.base) + "</td><td>" + (sa.al * 100).toFixed(0) + "%</td><td>" + fm(sa.tax) + "</td><td>" + (s.al * 100).toFixed(0) + "%</td><td>" + fm(s.tax) + "</td></tr>";
+    });
+    h += '<tr class="total"><td>Imposta lorda</td><td>' + fm(b.imp) + "</td><td></td><td>" + fm(a.lordo) + "</td><td></td><td>" + fm(b.lordo) + "</td></tr>";
+    $("btable").innerHTML = h + "</tbody>";
+  }
+
+  function renderChart(inp, cur) {
+    var W = 720, H = 260, L = 52, R = 16, T = 16, B = 34;
+    var xmax = Math.max(300000, Math.ceil(cur * 1.15 / 50000) * 50000);
+    var pts = [], ymax = 500;
+    for (var x = 0; x <= xmax; x += xmax / 300) {
+      var o = Object.assign({}, inp, { reddito: x, redditoLav: 0 });
+      var d = calc(o, 2025).netta - calc(o, 2026).netta;
+      pts.push([x, d]); ymax = Math.max(ymax, d);
+    }
+    ymax = Math.ceil(ymax / 100) * 100;
+    var ymin = Math.min(0, Math.floor(Math.min.apply(null, pts.map(function (p) { return p[1]; })) / 100) * 100);
+    var sx = function (v) { return L + (v / xmax) * (W - L - R); };
+    var sy = function (v) { return T + (1 - (v - ymin) / (ymax - ymin)) * (H - T - B); };
+    var g = "";
+    var ystep = ymax - ymin > 600 ? 200 : 100;
+    for (var yv = ymin; yv <= ymax; yv += ystep) g += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + sy(yv) + '" y2="' + sy(yv) + '"/>';
+    var ax = "";
+    for (var yv2 = ymin; yv2 <= ymax; yv2 += ystep) ax += '<text x="' + (L - 8) + '" y="' + (sy(yv2) + 4) + '" text-anchor="end">' + eur0.format(yv2) + "</text>";
+    var xstep = xmax > 300000 ? 100000 : 50000;
+    for (var xv = 0; xv <= xmax; xv += xstep) ax += '<text x="' + sx(xv) + '" y="' + (H - 10) + '" text-anchor="middle">' + (xv / 1000) + "k</text>";
+    var line = pts.map(function (p, i) { return (i ? "L" : "M") + sx(p[0]).toFixed(1) + "," + sy(p[1]).toFixed(1); }).join("");
+    var area = line + "L" + sx(xmax) + "," + sy(0) + "L" + sx(0) + "," + sy(0) + "Z";
+    var o2 = Object.assign({}, inp, { reddito: cur, redditoLav: 0 });
+    var dc = calc(o2, 2025).netta - calc(o2, 2026).netta;
+    var cx = sx(Math.min(cur, xmax)), cy = sy(dc);
+    var anchor = cx > W * 0.7 ? "end" : "start", dx = anchor === "end" ? -10 : 10;
+    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Risparmio IRPEF 2026 rispetto al 2025 per livello di reddito">' +
+      '<g class="grid">' + g + "</g>" +
+      '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + sy(440) + '" y2="' + sy(440) + '" stroke="var(--old)" stroke-dasharray="4 4"/>' +
+      '<path d="' + area + '" fill="var(--accent)" fill-opacity="0.12"/>' +
+      '<path d="' + line + '" fill="none" stroke="var(--accent)" stroke-width="2.25" stroke-linejoin="round"/>' +
+      '<line x1="' + cx + '" x2="' + cx + '" y1="' + T + '" y2="' + (H - B) + '" stroke="var(--ink)" stroke-opacity="0.25"/>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="var(--sheet)" stroke="var(--accent)" stroke-width="2.5"/>' +
+      '<text x="' + (cx + dx) + '" y="' + Math.max(cy - 10, T + 10) + '" text-anchor="' + anchor + '" style="fill:var(--ink);font:600 12px var(--font-num)">' + eur0.format(dc) + " € a " + eur0.format(cur) + " €</text>" +
+      '<g class="axis">' + ax + "</g></svg>";
+    $("chart").innerHTML = svg;
+  }
+
+  // Scorciatoie di reddito
+  [20000, 35000, 50000, 80000, 150000, 250000].forEach(function (v) {
+    var bt = document.createElement("button");
+    bt.type = "button"; bt.className = "chip"; bt.textContent = eur0.format(v);
+    bt.addEventListener("click", function () { $("reddito").value = String(v); render(); });
+    $("chips").appendChild(bt);
+  });
+  $("f").addEventListener("input", render);
+  $("f").addEventListener("change", render);
+  $("f").addEventListener("submit", function (e) { e.preventDefault(); });
+  $("reset").addEventListener("click", function () { load(DEFAULTS); render(); });
+  window.__irpef = { calc: calc };
+  render();
+})();
+</script>
