@@ -164,17 +164,22 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
         <div class="inp"><input id="abitaz" inputmode="decimal" value="0"><span class="unit">€</span></div>
         <small>Rendita dell'abitazione principale e pertinenze (rigo RB10 col. 18).</small>
       </div>
+      <div class="field">
+        <label for="contributi">Contributi previdenziali e assistenziali (RP21)</label>
+        <div class="inp"><input id="contributi" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Contributi obbligatori e volontari alla propria gestione: INPS artigiani e commercianti, gestione separata, casse professionali, riscatto della laurea, prosecuzione volontaria, assicurazione casalinghe. Deducibili per intero. Non inserire i contributi già trattenuti in busta paga.</small>
+      </div>
       <div class="row2">
         <div class="field">
-          <label for="deducibili">Oneri deducibili</label>
-          <div class="inp"><input id="deducibili" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        </div>
-        <div class="field">
-          <label for="prev">Previdenza compl.</label>
+          <label for="prev">Previdenza compl. (RP27)</label>
           <div class="inp"><input id="prev" inputmode="decimal" value="0"><span class="unit">€</span></div>
         </div>
+        <div class="field">
+          <label for="deducibili">Altri oneri deducibili</label>
+          <div class="inp"><input id="deducibili" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
       </div>
-      <small style="color:var(--muted);font-size:12px;margin-top:-6px">La previdenza complementare è dedotta fino a 5.164,57 € nel 2025 e 5.300 € nel 2026.</small>
+      <small style="color:var(--muted);font-size:12px;margin-top:-6px">Previdenza complementare dedotta fino a 5.164,57 € nel 2025 e 5.300 € nel 2026. Altri oneri: assegni al coniuge (RP22), contributi per colf entro 1.549,37 € (RP23), erogazioni liberali e gli altri righi della Sezione II.</small>
       <div class="field">
         <label for="cedolare">Redditi a cedolare secca o forfetari</label>
         <div class="inp"><input id="cedolare" inputmode="decimal" value="0"><span class="unit">€</span></div>
@@ -336,6 +341,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       <h2>Regole applicate</h2>
       <h3>Imposta e detrazioni (quadro RN)</h3>
       <ol>
+        <li><b>RN3:</b> totale degli oneri deducibili della Sezione II del quadro RP: contributi previdenziali e assistenziali (RP21, senza limite), previdenza complementare (RP27, con il tetto annuo) e gli altri oneri inseriti.</li>
         <li><b>RN4–RN5:</b> imponibile = RN1 − RN2 − RN3. Scaglioni 23% fino a 28.000 €, 35% (2025) o 33% (2026) fino a 50.000 €, 43% oltre. Quota fissa: 6.440 € al secondo scaglione; 14.140 € (2025) o 13.700 € (2026) al terzo.</li>
         <li><b>Reddito per detrazioni:</b> RN1 col. 1 − RN2, comprensivo dei redditi a cedolare secca e forfetari. I quozienti delle formule sono troncati alla quarta cifra decimale, come indicato nelle istruzioni.</li>
         <li><b>RN6 coniuge:</b> fino a 15.000 € 800 − 110 × R/15.000; fino a 40.000 € 690 € più una maggiorazione da 10 a 30 € tra 29.000 e 35.200 €; fino a 80.000 € 690 × (80.000 − R)/40.000. In dodicesimi per i mesi a carico, salvo la maggiorazione.</li>
@@ -392,7 +398,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
   var REGMAP = {};
   REGIONI.forEach(function (r) { REGMAP[r[0]] = r; });
 
-  var DEFAULTS = { reddito: "45000", abitaz: "0", deducibili: "0", prev: "0", cedolare: "0", tipo: "dip", giorni: "365", contratto: "ti", redditoLav: "",
+  var DEFAULTS = { reddito: "45000", abitaz: "0", contributi: "0", deducibili: "0", prev: "0", cedolare: "0", tipo: "dip", giorni: "365", contratto: "ti", redditoLav: "",
     coniuge: false, mesiConiuge: "12", figliDetr: "0", percFigli: "100", figliTot: "0", ascendenti: "0", disabile: false,
     sanitarie: "1200", mutuo: "0", spese19: "800", edilizi: "0", altreDetr: "0", regione: "custom", addReg: "1,23", addCom: "0,8", esenzCom: "0", ritenute: "0" };
   var IDS = Object.keys(DEFAULTS);
@@ -496,7 +502,8 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var Rc = Math.max(inp.reddito, 0);
     var rn2 = Math.min(Math.max(inp.abitaz, 0), Rc);
     var prevDed = Math.min(Math.max(inp.prev, 0), P.prevCap);
-    var rn3 = Math.min(Math.max(inp.deducibili, 0) + prevDed, Rc - rn2);
+    var contrib = Math.max(inp.contributi, 0);
+    var rn3 = Math.min(contrib + Math.max(inp.deducibili, 0) + prevDed, Rc - rn2);
     var imp = Math.max(Rc - rn2 - rn3, 0);
     var R = Math.max(Rc - rn2 + Math.max(inp.cedolare, 0), 0); // reddito per detrazioni (RN1 col. 1 − RN2)
 
@@ -622,7 +629,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       ["sect", "", "Reddito"],
       ["", "RN1", "Reddito complessivo", a.Rc, b.Rc, "dim"],
       ["minus", "RN2", "Deduzione abitazione principale", a.rn2, b.rn2, a.rn2 || b.rn2 ? "" : "skip"],
-      ["minus", "RN3", "Oneri deducibili" + (inp.prev > 0 ? " (incl. previdenza complementare)" : ""), a.rn3, b.rn3],
+      ["minus", "RN3", "Oneri deducibili (quadro RP, sez. II: RP21 contributi" + (inp.prev > 0 ? ", RP27 previdenza complementare" : "") + (inp.deducibili > 0 ? ", altri oneri" : "") + ")", a.rn3, b.rn3],
       ["total", "RN4", "Reddito imponibile", a.imp, b.imp],
       ["", "RN5", "Imposta lorda", a.lordo, b.lordo],
       ["sect", "", "Detrazioni"],
