@@ -210,9 +210,57 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       </div>
       <small style="color:var(--muted);font-size:12px;margin-top:-6px">Previdenza complementare dedotta fino a 5.164,57 € nel 2025 e 5.300 € nel 2026. Altri oneri: assegni al coniuge (RP22), contributi per colf entro 1.549,37 € (RP23), erogazioni liberali e gli altri righi della Sezione II.</small>
       <div class="field">
-        <label for="cedolare">Redditi a cedolare secca o forfetari</label>
+        <label for="cedolare">Altri redditi solo per le soglie</label>
         <div class="inp"><input id="cedolare" inputmode="decimal" value="0"><span class="unit">€</span></div>
-        <small>Non sono tassati qui, ma si sommano al reddito di riferimento per detrazioni e soglie (RN1 col. 1).</small>
+        <small>Redditi a imposta sostitutiva non indicati sotto (per esempio mance tassate al 5%): si sommano al reddito di riferimento per detrazioni e soglie (RN1 col. 1). Cedolare secca e forfettario si aggiungono da soli.</small>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Cedolare secca <code>RB11 → LC1</code></legend>
+      <div class="row2">
+        <div class="field">
+          <label for="ced21">Canoni al 21%</label>
+          <div class="inp"><input id="ced21" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+        <div class="field">
+          <label for="ced10">Canoni concordati 10%</label>
+          <div class="inp"><input id="ced10" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="ced26">Locazioni brevi 26%</label>
+          <div class="inp"><input id="ced26" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+        <div class="field">
+          <label for="ritCed">Ritenute CU brevi</label>
+          <div class="inp"><input id="ritCed" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        </div>
+      </div>
+      <small style="color:var(--muted);font-size:12px;margin-top:-6px">Canoni annui per la propria quota. Le locazioni brevi del primo immobile vanno nel 21%. Le ritenute degli intermediari (LC1 col. 4) si scalano dall'imposta.</small>
+    </fieldset>
+
+    <fieldset>
+      <legend>Regime forfettario <code>LM22–LM42</code></legend>
+      <label class="check"><input type="checkbox" id="forf"> Applica il regime forfettario</label>
+      <div class="sub-box" id="forfBox">
+        <div class="field">
+          <label for="coeffForf">Attività (coefficiente di redditività)</label>
+          <select id="coeffForf"></select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="ricavi">Ricavi o compensi</label>
+            <div class="inp"><input id="ricavi" inputmode="decimal" value="0"><span class="unit">€</span></div>
+          </div>
+          <div class="field">
+            <label for="contribForf">Contributi versati</label>
+            <div class="inp"><input id="contribForf" inputmode="decimal" value="0"><span class="unit">€</span></div>
+          </div>
+        </div>
+        <small style="color:var(--muted);font-size:12px;margin-top:-6px">Ricavi incassati nell'anno (LM22 col. 3, principio di cassa). Contributi previdenziali versati nell'anno (LM35): si deducono dal reddito forfettario, l'eccedenza dal reddito complessivo.</small>
+        <label class="check"><input type="checkbox" id="startup"> Nuova attività: aliquota del 5% per i primi cinque anni</label>
       </div>
     </fieldset>
 
@@ -328,6 +376,11 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
           <div class="inp"><input id="esenzCom" inputmode="decimal" value="0"><span class="unit">€</span></div>
         </div>
       </div>
+      <div class="field">
+        <label for="accTrattCom">Acconto comunale trattenuto in busta paga</label>
+        <div class="inp"><input id="accTrattCom" inputmode="decimal" value="0"><span class="unit">€</span></div>
+        <small>Acconto dell'addizionale comunale per l'anno successivo già trattenuto dal datore di lavoro o dall'ente pensionistico (RC10 col. 5).</small>
+      </div>
     </fieldset>
 
     <fieldset>
@@ -379,6 +432,30 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       </div>
       <div class="tablewrap"><table class="liq" id="acctable"></table></div>
       <div id="accnote" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
+
+      <h2 style="margin-top:26px">Tutti i versamenti del 30 novembre 2026</h2>
+      <p class="sub">Seconda rata o rata unica di ogni acconto, con il metodo storico e con quello previsionale. Il metodo si sceglie imposta per imposta.</p>
+      <div class="accform" id="otherAccForm">
+        <div class="field ced-only">
+          <label for="lc1dich">Cedolare: LC1 col. 5 dichiarato</label>
+          <div class="inp"><input id="lc1dich" inputmode="decimal" placeholder="calcolato"><span class="unit">€</span></div>
+        </div>
+        <div class="field ced-only">
+          <label for="versCed">Cedolare: acconti 2026 versati</label>
+          <div class="inp"><input id="versCed" inputmode="decimal" placeholder="= 1ª rata storico"><span class="unit">€</span></div>
+        </div>
+        <div class="field forf-only">
+          <label for="lm42dich">Forfettario: LM42 dichiarato</label>
+          <div class="inp"><input id="lm42dich" inputmode="decimal" placeholder="calcolato"><span class="unit">€</span></div>
+        </div>
+        <div class="field forf-only">
+          <label for="versForf">Forfettario: acconti 2026 versati</label>
+          <div class="inp"><input id="versForf" inputmode="decimal" placeholder="= 1ª rata storico"><span class="unit">€</span></div>
+        </div>
+        <label class="check forf-only"><input type="checkbox" id="isaForf"> Forfettario: rate 50% + 50%</label>
+      </div>
+      <div class="tablewrap"><table class="liq" id="alltable" style="min-width:680px"></table></div>
+      <div id="allnote" style="margin-top:12px;display:flex;flex-direction:column;gap:8px"></div>
     </section>
 
     <section class="card" id="clientCard">
@@ -454,6 +531,13 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
         <li><b>Regionale:</b> aliquote e scaglioni dalla tabella del modello Redditi PF 2026, anno d'imposta 2025. Gestiti i casi di Friuli Venezia Giulia, Lazio, Trento, Valle d'Aosta e la detrazione base di Bolzano; le altre detrazioni regionali per figli o disabilità non sono applicate. Le stesse aliquote sono usate anche per il 2026: verifica eventuali delibere regionali successive.</li>
         <li><b>Comunale:</b> aliquota unica sull'intero imponibile, se l'imponibile supera la soglia di esenzione deliberata dal Comune. L'acconto per l'anno successivo è il 30%.</li>
       </ol>
+      <h3>Cedolare secca e regime forfettario (quadri LC e LM)</h3>
+      <ol>
+        <li><b>Cedolare secca:</b> imposta del 21% sui canoni, del 10% sui contratti a canone concordato e del 26% sulle locazioni brevi oltre il primo immobile. Dall'imposta (LC1 col. 3) si scalano le ritenute degli intermediari sulle locazioni brevi (col. 4); se la differenza è negativa diventa una ritenuta IRPEF (RN33 col. 4). I canoni contano nel reddito di riferimento per detrazioni e soglie.</li>
+        <li><b>Forfettario:</b> reddito lordo = ricavi o compensi incassati × coefficiente di redditività dell'attività (allegato 4 L. 190/2014); reddito netto = reddito lordo − contributi previdenziali versati (LM35); imposta sostitutiva del 15%, o del 5% per i primi cinque anni di una nuova attività (LM39). I contributi che eccedono il reddito forfettario si deducono dal reddito complessivo (LM49). Il reddito forfettario conta per detrazioni e soglie ma non paga IRPEF né addizionali. Il regime richiede ricavi dell'anno precedente fino a 85.000 € e cessa nell'anno in cui si superano 100.000 €.</li>
+        <li><b>Acconti:</b> cedolare (rigo LC2, codici 1840 e 1841) e imposta sostitutiva (base LM42, codici 1790 e 1791) seguono le stesse regole dell'IRPEF: 100% della base se almeno 52 €, con metodo storico o previsionale. La cedolare si versa sempre al 40% + 60%; i forfettari con attività soggette a ISA versano al 50% + 50% (art. 12-quinquies D.L. 34/2019).</li>
+        <li><b>Acconto dell'addizionale comunale (RV17):</b> 30% dell'imponibile per l'aliquota comunale deliberata per l'anno precedente, se l'imponibile supera la soglia di esenzione, meno quanto trattenuto dal datore di lavoro (RC10 col. 5). Si versa a giugno con il saldo (codice 3843) e non rientra nei versamenti di novembre.</li>
+      </ol>
       <h3>Acconto IRPEF 2026 (righi RN61–RN62)</h3>
       <ol>
         <li><b>Metodo storico:</b> l'acconto è pari al 100% del rigo RN34 (o RN61 col. 4 nei casi particolari) e non è dovuto se l'importo è inferiore a 52 €. Si versa il 40% entro il 30 giugno 2026 (30 luglio con lo 0,40%) e il 60% entro il 30 novembre 2026. Per i soggetti ISA le rate sono del 50%. Se la prima rata non supera 103 € (acconto sotto 257,52 €), si versa tutto in un'unica soluzione entro il 30 novembre.</li>
@@ -502,18 +586,31 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
 
   var DEFAULTS = { reddito: "45000", abitaz: "0", contributi: "0", deducibili: "0", prev: "0", cedolare: "0", tipo: "dip", giorni: "365", contratto: "ti", redditoLav: "",
     coniuge: false, mesiConiuge: "12", figliDetr: "0", percFigli: "100", figliTot: "0", ascendenti: "0", disabile: false,
-    sanitarie: "1200", mutuo: "0", spese19: "800", edilizi: "0", altreDetr: "0", regione: "custom", addReg: "1,23", addCom: "0,8", esenzCom: "0", ritenute: "0", acconti: "" };
+    sanitarie: "1200", mutuo: "0", spese19: "800", edilizi: "0", altreDetr: "0", regione: "custom", addReg: "1,23", addCom: "0,8", esenzCom: "0", ritenute: "0", acconti: "",
+    accTrattCom: "0", ced21: "0", ced10: "0", ced26: "0", ritCed: "0", forf: false, coeffForf: "7", ricavi: "0", contribForf: "0", startup: false };
   // Esempio: professionista con ritenute d'acconto e reddito in calo nel 2026
   var EXAMPLE = {
-    2025: Object.assign({}, DEFAULTS, { reddito: "62000", tipo: "aut", contributi: "9500", sanitarie: "1400", spese19: "900", ritenute: "7000", acconti: "9800" }),
-    2026: Object.assign({}, DEFAULTS, { reddito: "44000", tipo: "aut", contributi: "7200", sanitarie: "1400", spese19: "900", ritenute: "5200" })
+    2025: Object.assign({}, DEFAULTS, { reddito: "62000", tipo: "aut", contributi: "9500", sanitarie: "1400", spese19: "900", ritenute: "7000", acconti: "9800", ced21: "7200" }),
+    2026: Object.assign({}, DEFAULTS, { reddito: "44000", tipo: "aut", contributi: "7200", sanitarie: "1400", spese19: "900", ritenute: "5200", ced21: "7200" })
   };
-  var ACC_DEFAULTS = { rn34dich: "", margine: "0", isa: false };
+  var ACC_DEFAULTS = { rn34dich: "", margine: "0", isa: false, lc1dich: "", versCed: "", lm42dich: "", versForf: "", isaForf: true };
+  var ACC_TEXT = ["rn34dich", "margine", "lc1dich", "versCed", "lm42dich", "versForf"];
+  var COEFF = [
+    [40, "Industrie alimentari e delle bevande (10-11)"],
+    [40, "Commercio all'ingrosso e al dettaglio (45, 46.2-46.9, 47.1-47.7, 47.9)"],
+    [40, "Commercio ambulante di alimentari e bevande (47.81)"],
+    [54, "Commercio ambulante di altri prodotti (47.82-47.89)"],
+    [86, "Costruzioni e attività immobiliari (41-43, 68)"],
+    [62, "Intermediari del commercio (46.1)"],
+    [40, "Alloggio e ristorazione (55-56)"],
+    [78, "Attività professionali, scientifiche, tecniche, sanitarie, istruzione, servizi finanziari e assicurativi"],
+    [67, "Altre attività economiche"]
+  ];
   var CLIENT_DEFAULTS = { cliente: "", studio: "", metodo: "auto", noteCliente: "" };
   var CLIENT_IDS = Object.keys(CLIENT_DEFAULTS);
   var IDS = Object.keys(DEFAULTS);
-  var CHECKS = { coniuge: 1, disabile: 1, isa: 1 };
-  var SELECTS = { tipo: 1, contratto: 1, percFigli: 1, regione: 1 };
+  var CHECKS = { coniuge: 1, disabile: 1, isa: 1, forf: 1, startup: 1, isaForf: 1 };
+  var SELECTS = { tipo: 1, contratto: 1, percFigli: 1, regione: 1, coeffForf: 1 };
   var KEY = "irpef2026-inputs-v3";
   var $ = function (id) { return document.getElementById(id); };
 
@@ -613,9 +710,23 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var rn2 = Math.min(Math.max(inp.abitaz, 0), Rc);
     var prevDed = Math.min(Math.max(inp.prev, 0), P.prevCap);
     var contrib = Math.max(inp.contributi, 0);
-    var rn3 = Math.min(contrib + Math.max(inp.deducibili, 0) + prevDed, Rc - rn2);
+    // Regime forfettario (quadro LM)
+    var fCoeff = (COEFF[inp.coeffForf] || COEFF[8])[0], fLordo = 0, fContrib = 0, fEcc = 0, fNetto = 0, fImp = 0, fAliq = inp.startup ? 0.05 : 0.15;
+    if (inp.forf) {
+      fLordo = Math.max(inp.ricavi, 0) * fCoeff / 100;
+      fContrib = Math.min(Math.max(inp.contribForf, 0), fLordo);
+      fEcc = Math.max(inp.contribForf, 0) - fContrib; // LM49: deducibile dal reddito complessivo
+      fNetto = fLordo - fContrib;
+      fImp = fNetto * fAliq;
+    }
+    // Cedolare secca (quadro LC)
+    var cBase = Math.max(inp.ced21, 0) + Math.max(inp.ced10, 0) + Math.max(inp.ced26, 0);
+    var cImp = Math.max(inp.ced21, 0) * 0.21 + Math.max(inp.ced10, 0) * 0.10 + Math.max(inp.ced26, 0) * 0.26;
+    var cDiff = cImp - Math.max(inp.ritCed, 0); // LC1 col. 5; se negativa va a RN33 col. 4
+
+    var rn3 = Math.min(contrib + Math.max(inp.deducibili, 0) + prevDed + fEcc, Rc - rn2);
     var imp = Math.max(Rc - rn2 - rn3, 0);
-    var R = Math.max(Rc - rn2 + Math.max(inp.cedolare, 0), 0); // reddito per detrazioni (RN1 col. 1 − RN2)
+    var R = Math.max(Rc - rn2 + Math.max(inp.cedolare, 0) + fNetto + cBase, 0); // reddito per detrazioni (RN1 col. 1 − RN2)
 
     var slices = [], lordo = 0;
     for (var i = 0; i < P.lim.length; i++) {
@@ -626,7 +737,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     }
 
     var coniuge = detConiuge(inp, R), figli = detFigli(inp, R), asc = detAscendenti(inp, R);
-    var dLav = detLavoro(inp, R);
+    var dLav = inp.forf && inp.tipo === "aut" ? 0 : detLavoro(inp, R); // il reddito forfettario non dà la detrazione RN7
 
     var somma = 0, ulteriore = 0;
     if (inp.tipo === "dip") {
@@ -660,15 +771,18 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var dovuteAdd = netta > 10.33;
     var addReg = dovuteAdd ? addRegionale(inp, imp) : 0;
     var addCom = dovuteAdd && imp > inp.esenzCom ? imp * inp.addCom / 100 : 0;
-    var rn34 = netta - Math.max(inp.ritenute, 0);
+    var rn34 = netta - Math.max(inp.ritenute, 0) - Math.max(-cDiff, 0);
     var saldo = rn34 - Math.max(inp.acconti || 0, 0);
-    var carico = netta + addReg + addCom - somma;
+    var carico = netta + addReg + addCom - somma + cImp + fImp;
+    var accComDov = imp > inp.esenzCom ? imp * inp.addCom / 100 * 0.3 : 0;
 
     return { Rc: Rc, rn2: rn2, rn3: rn3, prevDed: prevDed, imp: imp, R: R, slices: slices, lordo: lordo,
       coniuge: coniuge, figli: figli, asc: asc, dLav: dLav, ulteriore: ulteriore, somma: somma, rn8: rn8,
       quota: quota, tetto: tetto, spese19: spese19, spese19amm: spese19amm, detSan: detSan, detMutuo: detMutuo, det19: det19, taglio: taglio, rn13: rn13,
       edilizi: edilizi, altre: altre, rn22: rn22, netta: netta, incapienza: incapienza,
-      addReg: addReg, addCom: addCom, accCom: addCom * 0.3, rn34: rn34, saldo: saldo, carico: carico };
+      addReg: addReg, addCom: addCom, accCom: accComDov, accComVers: Math.max(accComDov - Math.max(inp.accTrattCom, 0), 0), rn34: rn34,
+      fCoeff: fCoeff, fLordo: fLordo, fContrib: fContrib, fEcc: fEcc, fNetto: fNetto, fImp: fImp, fAliq: fAliq, forf: !!inp.forf, ricavi: Math.max(inp.ricavi, 0),
+      cBase: cBase, cImp: cImp, cDiff: cDiff, ritCed: Math.max(inp.ritCed, 0), saldo: saldo, carico: carico };
   }
 
   // ---- Stato: un insieme di dati per anno, più i parametri dell'acconto ----
@@ -694,14 +808,15 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var o = {};
     IDS.forEach(function (k) { var el = $(k); o[k] = CHECKS[k] ? el.checked : el.value; });
     state[state.cur] = o;
-    ["rn34dich", "margine"].forEach(function (k) { state.acc[k] = $(k).value; });
-    state.acc.isa = $("isa").checked;
+    ACC_TEXT.forEach(function (k) { state.acc[k] = $(k).value; });
+    state.acc.isa = $("isa").checked; state.acc.isaForf = $("isaForf").checked;
     CLIENT_IDS.forEach(function (k) { state.client[k] = $(k).value; });
   }
   function stateToForm() {
     var src = state[state.cur];
     IDS.forEach(function (k) { var el = $(k); if (CHECKS[k]) el.checked = !!src[k]; else el.value = src[k] == null ? "" : src[k]; });
-    ["rn34dich", "margine"].forEach(function (k) { $(k).value = state.acc[k]; });
+    ACC_TEXT.forEach(function (k) { $(k).value = state.acc[k] == null ? "" : state.acc[k]; });
+    $("isaForf").checked = state.acc.isaForf !== false;
     $("primo").value = state[2026].acconti || "";
     $("isa").checked = !!state.acc.isa;
     CLIENT_IDS.forEach(function (k) { $(k).value = state.client[k] || ""; });
@@ -748,6 +863,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     $("rlWrap").hidden = inp.tipo !== "dip";
     $("contrattoWrap").style.visibility = inp.tipo === "dip" ? "visible" : "hidden";
     $("addRegWrap").hidden = inp.regione !== "custom";
+    $("forfBox").hidden = !inp.forf;
     $("accLabel").textContent = cur === "2025" ? "Acconti versati per il 2025 (RN38)" : "Acconti 2026 già versati";
     $("accHint").textContent = cur === "2025"
       ? "Prima e seconda rata versate nel 2025 per l'anno 2025: danno il saldo di giugno 2026. Non incidono sull'acconto 2026, che si calcola sul rigo RN34."
@@ -775,15 +891,32 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var saldo26 = round2(b.rn34 - acc26);
     var minor = round2(stR2 - prevR2);
 
+    // Cedolare secca e forfettario: stesso schema storico/previsionale
+    var hasTxt = function (v) { return String(v == null ? "" : v).trim() !== ""; };
+    var showCed = a.cImp > 0 || b.cImp > 0 || hasTxt(acc.lc1dich);
+    var showForf = a.forf || b.forf || hasTxt(acc.lm42dich);
+    var ced = confronto(hasTxt(acc.lc1dich) ? num(acc.lc1dich) : a.cDiff, Math.max(b.cDiff, 0) * (1 + margine / 100), acc.versCed, false);
+    var frf = confronto(hasTxt(acc.lm42dich) ? num(acc.lm42dich) : a.fImp, b.fImp * (1 + margine / 100), acc.versForf, acc.isaForf !== false);
+    var irp = { st: st, primo: primo, primoDefault: !versatiSet, prevTot: prevTot, prevR2: prevR2, stR2: stR2, minor: minor, baseSt: baseSt, basePrev: basePrev };
+    var taxes = [{ key: "irpef", nome: "IRPEF", cod: "4034", cod1: "4033", r: irp }];
+    if (showCed) taxes.push({ key: "ced", nome: "Cedolare secca", cod: "1841", cod1: "1840", r: ced });
+    if (showForf) taxes.push({ key: "forf", nome: "Imposta sostitutiva forfettario", cod: "1791", cod1: "1790", r: frf });
+    if (taxes.length > 1 && !(irp.baseSt > 0 || irp.basePrev > 0 || (versatiSet && primo > 0))) taxes.shift(); // nessun acconto IRPEF in gioco
+    taxes.forEach(function (t) { t.scelta = pickRata(t.r); t.metodo = t.scelta === t.r.prevR2 && t.r.prevR2 !== t.r.stR2 ? "prev" : "storico"; });
+    var totScelta = round2(taxes.reduce(function (s0, t) { return s0 + t.scelta; }, 0));
+    var totSt = round2(taxes.reduce(function (s0, t) { return s0 + t.r.stR2; }, 0));
+    Array.prototype.forEach.call(document.querySelectorAll(".ced-only"), function (el) { el.hidden = !showCed; });
+    Array.prototype.forEach.call(document.querySelectorAll(".forf-only"), function (el) { el.hidden = !showForf; });
+
     $("summary").innerHTML =
-      kpi("hero", "Carico fiscale 2026", fm(b.carico), "IRPEF netta + addizionali" + (b.somma ? " − somma esente" : "")) +
+      kpi("hero", "Carico fiscale 2026", fm(b.carico), "IRPEF e addizionali" + (b.cImp ? " + cedolare" : "") + (b.fImp ? " + forfettario" : "") + (b.somma ? " − somma esente" : "")) +
       kpi("", "Variazione sul 2025", '<span class="' + (risp > 0.005 ? "pos" : risp < -0.005 ? "negv" : "") + '">' + (risp > 0.005 ? "−" : risp < -0.005 ? "+" : "") + fm(Math.abs(risp)) + "</span>", a.carico ? "carico 2025 " + fm(a.carico) : "—") +
-      kpi("", "Aliquota media 2026", b.Rc ? pct.format(b.carico / b.Rc) : "—", "marginale " + pct.format(marg)) +
-      kpi("", "2° acconto 30/11/2026", '<span class="' + (minor > 0.5 ? "pos" : "") + '">' + fm(Math.min(prevR2, stR2)) + "</span>", minor > 0.5 ? "previsionale · storico " + fm(stR2) : "storico");
+      kpi("", "Aliquota media 2026", (b.Rc + b.fNetto + b.cBase) > 0 ? pct.format(b.carico / (b.Rc + b.fNetto + b.cBase)) : "—", "sul reddito totale · marginale IRPEF " + pct.format(marg)) +
+      kpi("", "Da versare il 30/11/2026", '<span class="' + (totSt - totScelta > 0.5 ? "pos" : "") + '">' + fm(totScelta) + "</span>", (taxes.length > 1 ? taxes.length + " acconti" : "acconto IRPEF") + (totSt - totScelta > 0.5 ? " · storico " + fm(totSt) : ""));
 
     var al = [];
     if (b.tetto != null) al.push("<b>Tetto agli oneri (art. 16-ter TUIR):</b> nel 2026, con reddito di riferimento oltre 75.000 €, le spese detraibili soggette a limite sono ammesse fino a <b>" + eur0.format(b.tetto) + " €</b>." + (b.spese19 > b.tetto ? " Le altre spese al 19% inserite (" + eur0.format(b.spese19) + " €) sono state ridotte a questo importo." : ""));
-    if (b.incapienza > 0.5) al.push("<b>Incapienza:</b> " + fm(b.incapienza) + " di detrazioni 2026 superano l'imposta lorda e vanno perse (salvo regole specifiche, per esempio i bonus edilizi cedibili).");
+    if (b.incapienza > 0.5 && b.lordo > 0) al.push("<b>Incapienza:</b> " + fm(b.incapienza) + " di detrazioni 2026 superano l'imposta lorda e vanno perse (salvo regole specifiche, per esempio i bonus edilizi cedibili).");
     if (b.Rc > 200000 && b.taglio > 0) al.push("<b>Oltre 200.000 €:</b> nel 2026 le detrazioni per le altre spese al 19% sono ridotte di " + fm(b.taglio) + ", che neutralizza il beneficio dell'aliquota del 33%.");
     if (i26.prev > YEARS[2026].prevCap || i25.prev > YEARS[2025].prevCap) al.push("<b>Previdenza complementare:</b> dedotti " + fm(a.prevDed) + " nel 2025 e " + fm(b.prevDed) + " nel 2026; l'eccedenza non è deducibile.");
     if (i26.regione !== "custom" || i25.regione !== "custom") al.push("<b>Addizionale regionale:</b> aliquote dell'anno d'imposta 2025 (tabella del modello Redditi PF 2026), applicate anche al 2026. Controlla le detrazioni regionali per figli e disabilità.");
@@ -792,6 +925,21 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     function any(k) { return i25[k] > 0 || i26[k] > 0 || i25[k] === true || i26[k] === true; }
     var anyDip = i25.tipo === "dip" || i26.tipo === "dip";
     var lav = i25.tipo === i26.tipo ? labelLav(i26.tipo) : "Detrazione per tipo di reddito";
+    var extraRows = [];
+    if (showCed) extraRows.push(
+      ["sect", "", "Cedolare secca (quadro LC)"],
+      ["", "RB11", "Canoni assoggettati a cedolare", a.cBase, b.cBase, "dim"],
+      ["", "LC1", "Imposta cedolare secca (col. 3)", a.cImp, b.cImp],
+      ["minus", "LC1", "Ritenute su locazioni brevi (col. 4)", a.ritCed, b.ritCed, a.ritCed || b.ritCed ? "" : "skip"],
+      ["total", "LC1", "Differenza (col. 5), base dell'acconto cedolare", a.cDiff, b.cDiff]);
+    if (showForf) extraRows.push(
+      ["sect", "", "Regime forfettario (quadro LM)"],
+      ["", "LM22", "Ricavi o compensi", a.ricavi, b.ricavi, "dim"],
+      ["", "LM34", "Reddito lordo (coefficiente " + b.fCoeff + "%)", a.fLordo, b.fLordo],
+      ["minus", "LM35", "Contributi previdenziali dedotti", a.fContrib, b.fContrib],
+      ["total", "LM36", "Reddito netto", a.fNetto, b.fNetto],
+      ["total", "LM39", "Imposta sostitutiva (" + (a.fAliq === b.fAliq ? (b.fAliq * 100) + "%" : "15% o 5%") + "), base dell'acconto LM42", a.fImp, b.fImp],
+      ["", "LM49", "Contributi eccedenti, dedotti dal reddito complessivo", a.fEcc, b.fEcc, a.fEcc || b.fEcc ? "dim" : "skip"]);
     var rows = [
       ["sect", "", "Reddito"],
       ["", "RN1", "Reddito complessivo", a.Rc, b.Rc],
@@ -817,13 +965,14 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       ["total", "RN34", "Differenza (base dell'acconto per l'anno successivo)", a.rn34, b.rn34],
       ["minus", "RN38", "Acconti per l'anno (2026: già versati + 2ª rata " + (rata2 === prevR2 && rata2 !== stR2 ? "previsionale" : "storico") + ")", i25.acconti, acc26],
       ["total", "", "Saldo a debito (+) o a credito (−): giugno 2026 per il 2025, giugno 2027 stimato per il 2026", a.saldo, saldo26],
+    ].concat(extraRows, [
       ["sect", "", "Addizionali e carico complessivo"],
       ["plus", "RV2", "Addizionale regionale", a.addReg, b.addReg],
       ["plus", "RV10", "Addizionale comunale", a.addCom, b.addCom],
-      ["", "RV17", "Acconto addizionale comunale anno successivo (30%)", a.accCom, b.accCom, "dim" + (a.accCom || b.accCom ? "" : " skip")],
+      ["", "RV17", "Acconto addizionale comunale anno successivo (30%, al netto del trattenuto)", a.accComVers, b.accComVers, "dim" + (a.accCom || b.accCom ? "" : " skip")],
       ["minus", "", "Somma esente cuneo fiscale (in busta paga)", a.somma, b.somma, anyDip && (a.somma || b.somma) ? "" : "skip"],
-      ["grand", "", "Carico fiscale netto", a.carico, b.carico]
-    ];
+      ["grand", "", "Carico fiscale complessivo", a.carico, b.carico]
+    ]);
     var html = '<thead><tr><th>Rigo e voce</th><th>2025 · dichiarato</th><th class="y26">2026 · stima</th><th>Δ</th></tr></thead><tbody>';
     rows.forEach(function (r) {
       if (r[0] === "sect") { html += '<tr class="sect"><td colspan="4">' + r[2] + "</td></tr>"; return; }
@@ -833,10 +982,44 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     $("liq").innerHTML = html + "</tbody>";
 
     renderAcconti({ st: st, baseSt: baseSt, fromDich: String(acc.rn34dich).trim() !== "", primo: primo, primoDefault: !versatiSet, saldo26: saldo26, rata2: rata2, rn34b: b.rn34, margine: margine, basePrev: basePrev, prevTot: prevTot, prevR2: prevR2, stR2: stR2, minor: minor, isa: isa, b: b });
-    renderClient({ a: a, b: b, i25: i25, i26: i26, st: st, stR2: stR2, prevTot: prevTot, prevR2: prevR2, primo: primo, minor: minor, margine: margine, baseSt: baseSt, basePrev: basePrev, isa: isa });
+    renderAll(taxes, totScelta, totSt, a, b);
+    renderClient({ taxes: taxes, totScelta: totScelta, a: a, b: b, i25: i25, i26: i26, st: st, stR2: stR2, prevTot: prevTot, prevR2: prevR2, primo: primo, minor: minor, margine: margine, baseSt: baseSt, basePrev: basePrev, isa: isa });
     renderBrackets(a, b);
     renderChart(i26, b.Rc);
     save();
+  }
+
+  function confronto(baseSt, basePrev, versStr, half) {
+    var st = accontoStorico(baseSt, half);
+    var set = String(versStr == null ? "" : versStr).trim() !== "";
+    var primo = set ? num(versStr) : st.r1;
+    var prevTot = basePrev < 52 ? 0 : Math.round(basePrev);
+    var prevR2 = Math.max(round2(prevTot - primo), 0);
+    var stR2 = st.due ? Math.max(round2(st.tot - Math.max(primo, st.r1)), 0) : 0;
+    return { st: st, primo: primo, primoDefault: !set, prevTot: prevTot, prevR2: prevR2, stR2: stR2, minor: round2(stR2 - prevR2), baseSt: baseSt, basePrev: basePrev };
+  }
+  function pickRata(r) {
+    var m = state.client.metodo;
+    if (m === "storico") return r.stR2;
+    if (m === "prev") return r.prevR2;
+    return r.minor > 0.5 ? r.prevR2 : r.stR2;
+  }
+
+  function renderAll(taxes, totScelta, totSt, a, b) {
+    var h = '<thead><tr><th>Imposta</th><th>Base storica</th><th class="y26">Base previsionale</th><th>Già versato</th><th>2ª rata storico</th><th class="y26">2ª rata previsionale</th></tr></thead><tbody>';
+    taxes.forEach(function (t) {
+      var r = t.r, bp = r.minor > 0.5;
+      h += '<tr><td><span class="code">' + t.cod + "</span>" + t.nome + (r.st.unica ? ' <small style="color:var(--muted)">(rata unica)</small>' : "") + "</td><td>" + fm(r.baseSt) + "</td><td>" + fm(r.basePrev) + "</td><td>" + fm(r.primo) + '</td><td class="' + (bp ? "" : "best") + '">' + fm(r.stR2) + '</td><td class="' + (bp ? "best" : "") + '">' + fm(r.prevR2) + "</td></tr>";
+    });
+    var totPrev = round2(taxes.reduce(function (s0, t) { return s0 + t.r.prevR2; }, 0));
+    var totBest = round2(taxes.reduce(function (s0, t) { return s0 + Math.min(t.r.stR2, t.r.prevR2); }, 0));
+    h += '<tr class="grand"><td>Totale 30 novembre 2026</td><td></td><td></td><td></td><td>' + fm(totSt) + "</td><td>" + fm(totPrev) + "</td></tr></tbody>";
+    $("alltable").innerHTML = h;
+    var n = [];
+    n.push('<div class="notice" style="border-color:var(--accent);background:var(--accent-soft)"><b style="color:var(--accent)">Scegliendo il metodo migliore per ogni imposta</b> il 30 novembre si versano ' + fm(totBest) + (totSt - totBest > 0.5 ? ", " + fm(totSt - totBest) + " in meno rispetto al metodo storico." : ", come con il metodo storico.") + "</div>");
+    n.push('<div class="notice"><b>Addizionale comunale:</b> l\'acconto 2026 (rigo RV17, 30% dell\'imponibile 2025 per l\'aliquota comunale) è di ' + fm(a.accCom) + (a.accCom - a.accComVers > 0.005 ? ", di cui " + fm(a.accCom - a.accComVers) + " trattenuti in busta paga" : "") + ". Si versa in un'unica soluzione a giugno con il saldo (codice tributo 3843), quindi non riguarda il 30 novembre. Per il 2027 è stimato in " + fm(b.accComVers) + ".</div>");
+    n.push('<p class="sub" style="margin:0">Regole: acconto al 100% della base se almeno 52 €; prima rata 40% (50% per ISA e forfettari con attività soggette a ISA), seconda rata il resto; rata unica a novembre se la prima non supera 103 €. La cedolare secca segue sempre il 40% + 60% (rigo LC2). Codici della prima rata: IRPEF 4033, cedolare 1840, forfettario 1790.</p>');
+    $("allnote").innerHTML = n.join("");
   }
 
   function renderAcconti(x) {
@@ -862,7 +1045,7 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       n.push('<div class="notice"><b>Nessun vantaggio dal previsionale:</b> l\'imposta 2026 stimata non è inferiore alla base storica. Conviene versare la seconda rata del metodo storico, che mette al riparo da sanzioni.</div>');
     }
     if (!x.primoDefault && x.st.due && !x.st.unica && x.primo < x.st.r1 - 0.5) n.push('<div class="notice"><b>Prima rata inferiore al metodo storico:</b> hai versato ' + fm(x.primo) + " invece di " + fm(x.st.r1) + ". È corretto solo se l'imposta 2026 effettiva lo giustifica (metodo previsionale); altrimenti la differenza va regolarizzata con il ravvedimento operoso.</div>");
-    n.push('<p class="sub" style="margin:0">Restano fuori dal confronto gli acconti di cedolare secca, imposta sostitutiva del regime forfettario e contributi INPS, che hanno basi e calcoli propri. Ricorda che la scheda 2026 applica già l\'aliquota del 33% e le altre regole 2026.</p>');
+    n.push('<p class="sub" style="margin:0">Gli acconti di cedolare secca e del forfettario sono nella tabella seguente; i contributi INPS restano fuori. Ricorda che la scheda 2026 applica già l\'aliquota del 33% e le altre regole 2026.</p>');
     $("accnote").innerHTML = n.join("");
   }
 
@@ -898,34 +1081,40 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var x = d.x, a = x.a, b = x.b, c = d.c;
     var nome = c.cliente.trim() ? esc(c.cliente.trim()) : "Gentile cliente";
     var h = '<div class="rep">';
-    h += "<h1>Riepilogo IRPEF e acconto di novembre 2026</h1>";
+    var hasIrpef = (x.taxes || []).some(function (t) { return t.key === "irpef"; });
+    var anyPrev = (x.taxes || []).some(function (t) { return t.metodo === "prev"; });
+    h += "<h1>Riepilogo imposte e acconti di novembre 2026</h1>";
     h += '<div class="meta">' + (c.cliente.trim() ? "Cliente: <b>" + esc(c.cliente.trim()) + "</b> · " : "") + "Data: " + esc(d.oggi) + (c.studio.trim() ? " · Preparato da: " + esc(c.studio.trim()) : "") + "</div>";
-    h += '<div class="due"><div><div class="l">Da versare entro lunedì 30 novembre 2026</div><div class="t">Seconda rata dell\'acconto IRPEF 2026</div><div class="s">Modello F24, codice tributo 4034, anno di riferimento 2026 · ' + (d.metodo === "prev" ? "metodo previsionale" : "metodo storico") + "</div></div>";
-    h += '<div class="v">' + (d.rata > 0 ? fm(d.rata) : "nulla da versare") + "</div></div>";
+    var tx = x.taxes || [];
+    h += '<div class="due"><div><div class="l">Da versare entro lunedì 30 novembre 2026</div><div class="t">' + (tx.length > 1 ? "Acconti di novembre con un unico modello F24" : "Seconda rata dell\'acconto IRPEF 2026") + '</div><div class="s">Modello F24, sezione Erario, anno di riferimento 2026</div></div>';
+    h += '<div class="v">' + (x.totScelta > 0 ? fm(x.totScelta) : "nulla da versare") + "</div></div>";
+    h += '<table style="margin:-8px 0 18px"><thead><tr><th>Tributo</th><th>Codice</th><th>Metodo</th><th>Importo</th></tr></thead><tbody>';
+    tx.forEach(function (t) { h += "<tr><td>Acconto " + t.nome + " 2026</td><td class=\"n\">" + t.cod + "</td><td>" + (t.metodo === "prev" ? "previsionale" : "storico") + '</td><td class="n">' + fm(t.scelta) + "</td></tr>"; });
+    h += '<tr class="tot"><td>Totale</td><td></td><td></td><td class="n">' + fm(x.totScelta) + "</td></tr></tbody></table>";
 
     h += "<p>" + nome + ", " ;
-    if (d.metodo === "prev") {
-      h += "in base ai redditi e alle spese che prevediamo per il 2026, l'imposta dell'anno risulta inferiore a quella del 2025. Per questo l'acconto può essere ricalcolato: la seconda rata scende da " + fm(x.stR2) + " a " + fm(x.prevR2) + ", con " + fm(Math.max(x.stR2 - x.prevR2, 0)) + " in meno da versare ora.</p>";
+    if (anyPrev) {
+      h += "in base ai redditi e alle spese che prevediamo per il 2026, le imposte dell'anno risultano inferiori a quelle del 2025. Per questo gli acconti indicati come previsionali sono stati ricalcolati: il 30 novembre si versano " + fm(x.totScelta) + " invece di " + fm((x.taxes || []).reduce(function (s0, t) { return s0 + t.r.stR2; }, 0)) + " del metodo storico.</p>";
       h += '<div class="note"><b>Da sapere:</b> il calcolo si basa su una stima. Se a consuntivo l\'imposta 2026 risultasse più alta degli acconti versati, sulla differenza sarebbero dovuti una sanzione del 25% e gli interessi, riducibili con il ravvedimento operoso. Ti chiediamo di segnalarci subito eventuali redditi in più rispetto a quanto previsto.</div>';
     } else {
-      h += "l'acconto è calcolato sull'imposta della dichiarazione 2025 (metodo storico). Versando questo importo sei al riparo da sanzioni, anche se l'imposta 2026 dovesse risultare più alta." + (x.minor > 0.5 ? " In alternativa, con il metodo previsionale la rata potrebbe scendere a " + fm(x.prevR2) + ", accettando il rischio di sanzioni se la stima si rivelasse bassa." : "") + "</p>";
+      h += "gli acconti sono calcolati sulle imposte della dichiarazione 2025 (metodo storico). Versando questi importi sei al riparo da sanzioni, anche se le imposte 2026 dovessero risultare più alte.</p>";
     }
 
-    h += "<h2>Il confronto tra i due metodi</h2><table><thead><tr><th></th><th>Metodo storico</th><th>Metodo previsionale</th></tr></thead><tbody>";
-    h += '<tr><td>Imposta di riferimento</td><td class="n">' + fm(x.baseSt) + '</td><td class="n">' + fm(x.basePrev) + "</td></tr>";
-    h += '<tr><td>Acconto totale per il 2026</td><td class="n">' + fm(x.st.tot) + '</td><td class="n">' + fm(x.prevTot) + "</td></tr>";
-    h += '<tr><td>Acconti 2026 già versati</td><td class="n">' + fm(x.primo) + '</td><td class="n">' + fm(x.primo) + "</td></tr>";
-    h += '<tr class="tot"><td>Seconda rata (30 novembre)</td><td class="n' + (d.metodo === "storico" ? " hl" : "") + '">' + fm(x.stR2) + '</td><td class="n' + (d.metodo === "prev" ? " hl" : "") + '">' + fm(x.prevR2) + "</td></tr>";
+    if (hasIrpef) h += "<h2>Acconto IRPEF: il confronto tra i due metodi</h2><table><thead><tr><th></th><th>Metodo storico</th><th>Metodo previsionale</th></tr></thead><tbody>";
+    if (hasIrpef) h += '<tr><td>Imposta di riferimento</td><td class="n">' + fm(x.baseSt) + '</td><td class="n">' + fm(x.basePrev) + "</td></tr>";
+    if (hasIrpef) h += '<tr><td>Acconto totale per il 2026</td><td class="n">' + fm(x.st.tot) + '</td><td class="n">' + fm(x.prevTot) + "</td></tr>";
+    if (hasIrpef) h += '<tr><td>Acconti 2026 già versati</td><td class="n">' + fm(x.primo) + '</td><td class="n">' + fm(x.primo) + "</td></tr>";
+    if (hasIrpef) h += '<tr class="tot"><td>Seconda rata (30 novembre)</td><td class="n' + (d.metodo === "storico" ? " hl" : "") + '">' + fm(x.stR2) + '</td><td class="n' + (d.metodo === "prev" ? " hl" : "") + '">' + fm(x.prevR2) + "</td></tr>";
     function sal(r2) { var v = round2(x.b.rn34 - x.primo - r2); return fm(Math.abs(v)) + (v >= 0 ? " a debito" : " a credito"); }
-    h += '<tr><td>Saldo 2026 stimato (giugno 2027)</td><td class="n">' + sal(x.stR2) + '</td><td class="n">' + sal(x.prevR2) + "</td></tr></tbody></table>";
+    if (hasIrpef) h += '<tr><td>Saldo 2026 stimato (giugno 2027)</td><td class="n">' + sal(x.stR2) + '</td><td class="n">' + sal(x.prevR2) + "</td></tr></tbody></table>";
 
     h += "<h2>Le tue imposte: 2025 dichiarato e stima 2026</h2><table><thead><tr><th></th><th>2025</th><th>2026 (stima)</th></tr></thead><tbody>";
-    [["Reddito complessivo", a.Rc, b.Rc], ["Oneri deducibili", a.rn3 + a.rn2, b.rn3 + b.rn2], ["Reddito imponibile", a.imp, b.imp], ["Imposta lorda", a.lordo, b.lordo], ["Detrazioni", a.rn22, b.rn22], ["Imposta netta (IRPEF)", a.netta, b.netta, 1], ["Ritenute già subite", x.i25.ritenute, x.i26.ritenute], ["Imposta residua (base dell'acconto)", a.rn34, b.rn34, 1], ["Addizionali regionale e comunale", a.addReg + a.addCom, b.addReg + b.addCom], ["Carico fiscale complessivo", a.carico, b.carico, 1]].forEach(function (r) {
+    [["Reddito complessivo", a.Rc, b.Rc], ["Oneri deducibili", a.rn3 + a.rn2, b.rn3 + b.rn2], ["Reddito imponibile", a.imp, b.imp], ["Imposta lorda", a.lordo, b.lordo], ["Detrazioni", a.rn22, b.rn22], ["Imposta netta (IRPEF)", a.netta, b.netta, 1], ["Ritenute già subite", x.i25.ritenute, x.i26.ritenute], ["Imposta residua (base dell'acconto)", a.rn34, b.rn34, 1], ["Addizionali regionale e comunale", a.addReg + a.addCom, b.addReg + b.addCom]].concat(a.cImp || b.cImp ? [["Cedolare secca sugli affitti", a.cImp, b.cImp]] : [], a.forf || b.forf ? [["Reddito forfettario netto", a.fNetto, b.fNetto], ["Imposta sostitutiva forfettario", a.fImp, b.fImp]] : [], [["Carico fiscale complessivo", a.carico, b.carico, 1]]).forEach(function (r) {
       h += "<tr" + (r[3] ? ' class="tot"' : "") + "><td>" + r[0] + '</td><td class="n">' + fm(r[1]) + '</td><td class="n">' + fm(r[2]) + "</td></tr>";
     });
     h += "</tbody></table>";
     if (c.noteCliente.trim()) h += '<div class="free">' + esc(c.noteCliente.trim()) + "</div>";
-    h += '<div class="foot">Simulazione basata sui dati del modello Redditi PF 2026 (anno d\'imposta 2025) e sulle regole IRPEF 2026: 23% fino a 28.000 €, 33% fino a 50.000 €, 43% oltre. Gli importi sono indicativi e non sostituiscono la dichiarazione dei redditi. Non comprende gli acconti di cedolare secca, regime forfettario e contributi previdenziali.</div>';
+    h += '<div class="foot">Simulazione basata sui dati del modello Redditi PF 2026 (anno d\'imposta 2025) e sulle regole IRPEF 2026: 23% fino a 28.000 €, 33% fino a 50.000 €, 43% oltre. Gli importi sono indicativi e non sostituiscono la dichiarazione dei redditi. L\'acconto dell\'addizionale comunale si versa a giugno con il saldo. Non comprende i contributi previdenziali.</div>';
     return h + "</div>";
   }
 
@@ -940,21 +1129,23 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
     var x = d.x, a = x.a, b = x.b, c = d.c, L = [];
     L.push((c.cliente.trim() ? c.cliente.trim() : "Gentile cliente") + ",");
     L.push("");
-    if (d.metodo === "prev") {
-      L.push("in base ai redditi e alle spese previste per il 2026, l'imposta dell'anno risulta inferiore a quella del 2025: per questo abbiamo ricalcolato l'acconto (metodo previsionale).");
+    var anyPrevT = (x.taxes || []).some(function (t) { return t.metodo === "prev"; });
+    if (anyPrevT) {
+      L.push("in base ai redditi e alle spese previste per il 2026, le imposte dell'anno risultano inferiori a quelle del 2025: per questo abbiamo ricalcolato gli acconti indicati come previsionali.");
     } else {
-      L.push("ti riepiloghiamo l'acconto IRPEF di novembre, calcolato sulla dichiarazione 2025 (metodo storico).");
+      L.push("ti riepiloghiamo gli acconti di novembre, calcolati sulla dichiarazione 2025 (metodo storico).");
     }
     L.push("");
     L.push("DA VERSARE ENTRO LUNEDÌ 30 NOVEMBRE 2026");
-    L.push("Seconda rata acconto IRPEF 2026 - F24 codice tributo 4034, anno 2026: " + (d.rata > 0 ? fm(d.rata) : "nulla da versare"));
+    (x.taxes || []).forEach(function (t) { L.push("- Acconto " + t.nome + " 2026, F24 codice tributo " + t.cod + ", anno 2026 (" + (t.metodo === "prev" ? "metodo previsionale" : "metodo storico") + "): " + (t.scelta > 0 ? fm(t.scelta) : "nulla da versare")); });
+    if ((x.taxes || []).length > 1) L.push("Totale: " + fm(x.totScelta));
     L.push("");
-    L.push("Acconti 2026 già versati: " + fm(x.primo) + ".");
-    L.push("Confronto: metodo storico " + fm(x.stR2) + " / metodo previsionale " + fm(x.prevR2) + ".");
+    L.push("Acconti IRPEF 2026 già versati: " + fm(x.primo) + ".");
+    L.push("Acconto IRPEF, confronto: metodo storico " + fm(x.stR2) + " / metodo previsionale " + fm(x.prevR2) + ".");
     var sv = round2(b.rn34 - x.primo - d.rata);
     L.push("Saldo 2026 stimato a giugno 2027: " + fm(Math.abs(sv)) + (sv >= 0 ? " a debito." : " a credito."));
     L.push("Imposta netta 2025 dichiarata: " + fm(a.netta) + " - Imposta netta 2026 stimata: " + fm(b.netta) + ".");
-    if (d.metodo === "prev") {
+    if (anyPrevT) {
       L.push("");
       L.push("Da sapere: il calcolo si basa su una stima. Se a consuntivo l'imposta 2026 risultasse più alta degli acconti versati, sulla differenza sarebbero dovuti una sanzione del 25% e gli interessi, riducibili con il ravvedimento operoso. Ti chiediamo di segnalarci subito eventuali redditi in più rispetto al previsto.");
     }
@@ -1094,6 +1285,11 @@ footer.wrap { padding-block: 0 32px; font-size: 12px; color: var(--muted); }
       render();
     }
   });
+  (function () {
+    var ch = "";
+    COEFF.forEach(function (c, i) { ch += '<option value="' + i + '">' + c[0] + "% · " + c[1] + "</option>"; });
+    $("coeffForf").innerHTML = ch;
+  })();
   stateToForm();
   window.__irpef = { calc: calc };
   render();
